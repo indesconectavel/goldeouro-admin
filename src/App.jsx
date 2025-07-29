@@ -1,4 +1,4 @@
-import { postData } from './api';
+import { postData } from './js/api';
 
 export default function App() {
   return (

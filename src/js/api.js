@@ -11,9 +11,15 @@ export async function postData(endpoint, data) {
       body: JSON.stringify(data)
     });
 
-    return await response.json();
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result?.error || 'Erro desconhecido');
+    }
+
+    return result;
   } catch (error) {
-    console.error('Erro na requisição:', error);
-    return { error: 'Erro na conexão com o servidor' };
+    console.error('❌ Erro detalhado:', error);
+    return { error: error.message || 'Erro na conexão com o servidor' };
   }
 }

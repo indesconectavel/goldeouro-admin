@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { postData } from '../api';
+import { postData } from '../js/api';
 
 export default function Bloqueados() {
   const [bloqueados, setBloqueados] = useState(null);

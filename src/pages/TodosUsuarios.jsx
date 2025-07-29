@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { postData } from '../api';
+import { postData } from '../js/api';
 
 export default function TodosUsuarios() {
   const [usuarios, setUsuarios] = useState(null);

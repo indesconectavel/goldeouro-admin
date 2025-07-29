@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { postData } from '../api';
+import { postData } from '../js/api';
 
 export default function RelatorioSemanal() {
   const [data, setData] = useState(null);
