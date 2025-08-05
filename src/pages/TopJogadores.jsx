@@ -1,21 +1,10 @@
-import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
-
-export default function TopJogadores() {
-  const [top, setTop] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await postData('/admin/top-jogadores', {});
-      setTop(result);
-    }
-    fetchData();
-  }, []);
-
+const TopJogadores = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">🏆 Top Jogadores</h1>
-      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(top, null, 2)}</pre>
+    <div className="p-8 ml-64 min-h-screen bg-white">
+      <h1 className="text-2xl font-bold text-yellow-600">Top Jogadores</h1>
+      <p className="text-gray-700">Ranking dos jogadores com melhor desempenho no Gol de Ouro.</p>
     </div>
   );
-}
+};
+
+export default TopJogadores;

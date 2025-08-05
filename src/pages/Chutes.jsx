@@ -1,21 +1,10 @@
-import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
-
-export default function Chutes() {
-  const [chutes, setChutes] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await postData('/admin/chutes-recentes', {});
-      setChutes(result);
-    }
-    fetchData();
-  }, []);
-
+const Chutes = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">🥅 Chutes Recentes</h1>
-      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(chutes, null, 2)}</pre>
+    <div className="p-8 ml-64 min-h-screen bg-white">
+      <h1 className="text-2xl font-bold text-yellow-600">Chutes Recentes</h1>
+      <p className="text-gray-700">Listagem dos chutes realizados nas partidas em andamento ou finalizadas.</p>
     </div>
   );
-}
+};
+
+export default Chutes;

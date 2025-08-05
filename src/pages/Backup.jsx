@@ -1,21 +1,10 @@
-import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
-
-export default function Backup() {
-  const [status, setStatus] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await postData('/admin/backup-status', {});
-      setStatus(result);
-    }
-    fetchData();
-  }, []);
-
+const Backup = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">🗂️ Status do Backup</h1>
-      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(status, null, 2)}</pre>
+    <div className="p-8 ml-64 min-h-screen bg-white">
+      <h1 className="text-2xl font-bold text-yellow-600">Backup e Segurança</h1>
+      <p className="text-gray-700">Status dos backups automáticos e integridade dos dados do sistema.</p>
     </div>
   );
-}
+};
+
+export default Backup;

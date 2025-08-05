@@ -1,21 +1,10 @@
-import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
-
-export default function Estatisticas() {
-  const [estatisticas, setEstatisticas] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await postData('/admin/estatisticas', {});
-      setEstatisticas(result);
-    }
-    fetchData();
-  }, []);
-
+const Estatisticas = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">📈 Estatísticas Gerais</h1>
-      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(estatisticas, null, 2)}</pre>
+    <div className="p-8 ml-64 min-h-screen bg-white">
+      <h1 className="text-2xl font-bold text-yellow-600">Estatísticas</h1>
+      <p className="text-gray-700">Painel com dados de desempenho, uso da plataforma e engajamento dos jogadores.</p>
     </div>
   );
-}
+};
+
+export default Estatisticas;

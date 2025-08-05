@@ -1,21 +1,10 @@
-import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
-
-export default function TodosUsuarios() {
-  const [usuarios, setUsuarios] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      const result = await postData('/admin/usuarios', {});
-      setUsuarios(result);
-    }
-    fetchData();
-  }, []);
-
+const TodosUsuarios = () => {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">👥 Todos os Usuários</h1>
-      <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(usuarios, null, 2)}</pre>
+    <div className="p-8 ml-64 min-h-screen bg-white">
+      <h1 className="text-2xl font-bold text-yellow-600">Todos os Usuários</h1>
+      <p className="text-gray-700">Lista de todos os jogadores cadastrados no sistema.</p>
     </div>
   );
-}
+};
+
+export default TodosUsuarios;
