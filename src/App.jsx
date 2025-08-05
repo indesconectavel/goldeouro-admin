@@ -14,31 +14,31 @@ import Backup from './pages/Backup';
 import Login from './pages/Login';
 
 export default function App() {
-  const ProtectedRoute = ({ children }) =>
-    isAuthenticated() ? children : <Navigate to="/" />;
-
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+
         <Route
           path="/*"
           element={
             isAuthenticated() ? (
               <div className="flex">
                 <Sidebar />
-                <Routes>
-                  <Route path="/painel" element={<Dashboard />} />
-                  <Route path="/usuarios" element={<Usuarios />} />
-                  <Route path="/estatisticas" element={<Estatisticas />} />
-                  <Route path="/fila" element={<Fila />} />
-                  <Route path="/chutes" element={<Chutes />} />
-                  <Route path="/transacoes" element={<Transacoes />} />
-                  <Route path="/top-jogadores" element={<TopJogadores />} />
-                  <Route path="/logs" element={<Logs />} />
-                  <Route path="/bloqueados" element={<Bloqueados />} />
-                  <Route path="/backup" element={<Backup />} />
-                </Routes>
+                <div className="ml-64 flex-1">
+                  <Routes>
+                    <Route path="/painel" element={<Dashboard />} />
+                    <Route path="/usuarios" element={<Usuarios />} />
+                    <Route path="/estatisticas" element={<Estatisticas />} />
+                    <Route path="/fila" element={<Fila />} />
+                    <Route path="/chutes" element={<Chutes />} />
+                    <Route path="/transacoes" element={<Transacoes />} />
+                    <Route path="/top-jogadores" element={<TopJogadores />} />
+                    <Route path="/logs" element={<Logs />} />
+                    <Route path="/bloqueados" element={<Bloqueados />} />
+                    <Route path="/backup" element={<Backup />} />
+                  </Routes>
+                </div>
               </div>
             ) : (
               <Navigate to="/" />
