@@ -6,7 +6,7 @@ export default function RelatorioSemanal() {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await postData('/admin/relatorio-semanal', {});
+      const result = await fetchData('/admin/relatorio-semanal');
       setData(result);
     }
     fetchData();
