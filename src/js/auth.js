@@ -1,4 +1,5 @@
+
 export const isAuthenticated = () => {
-  const storedToken = localStorage.getItem('adminToken');
-  return storedToken === import.meta.env.VITE_ADMIN_TOKEN;
+  const token = localStorage.getItem('adminToken');
+  return token === import.meta.env.VITE_ADMIN_TOKEN;
 };
