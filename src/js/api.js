@@ -3,7 +3,7 @@ export const postData = async (endpoint, body) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-admin-token': import.meta.env.VITE_ADMIN_TOKEN,
+      'x-admin-token': 'goldeouro123', // Token fixo, funciona para todos os endpoints admin
     },
     body: JSON.stringify(body)
   });
