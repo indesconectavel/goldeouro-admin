@@ -1,4 +1,3 @@
-
 export const postData = async (endpoint, body) => {
   const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
     method: 'POST',

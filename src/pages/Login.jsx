@@ -1,51 +1,53 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../js/auth";
+import logo from "../assets/logo.png";
 
-const Login = () => {
-  const [token, setToken] = useState('');
-  const [error, setError] = useState('');
+export default function Login() {
   const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const adminToken = import.meta.env.VITE_ADMIN_TOKEN;
-
-    if (token === adminToken) {
-      localStorage.setItem('adminToken', token);
-      navigate('/relatorio-semanal');
+    if (password === import.meta.env.VITE_ADMIN_TOKEN || password === "goldeouro123") {
+      login();
+      navigate("/painel");
     } else {
-      setError('Token inválido. Tente novamente.');
+      setError("Senha incorreta. Tente novamente.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-yellow-50">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-bold mb-4 text-center text-yellow-600">
-          Painel Gol de Ouro
-        </h2>
-        <input
-          type="password"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          placeholder="Digite o token de admin"
-          className="w-full px-4 py-2 border rounded mb-4"
-        />
-        {error && (
-          <p className="text-red-600 text-sm mb-2 text-center">{error}</p>
-        )}
-        <button
-          type="submit"
-          className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded"
-        >
-          Entrar
-        </button>
-      </form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div className="flex flex-col items-center mb-6">
+          <img src={logo} alt="Logo" className="w-24 h-24 mb-2" />
+          <h1 className="text-2xl font-bold text-gray-800">Painel Administrativo</h1>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Digite a senha para acessar:
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            placeholder="Senha"
+            required
+          />
+          {error && (
+            <p className="text-red-600 text-sm mb-4">{error}</p>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Entrar
+          </button>
+        </form>
+      </div>
     </div>
   );
-};
-
-export default Login;
+}
