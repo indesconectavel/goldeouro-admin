@@ -1,26 +1,48 @@
-export const postData = async (endpoint, body) => {
-  const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-admin-token': 'goldeouro123',
-    },
-    body: JSON.stringify(body)
-  });
-  return await response.json();
+// src/js/api.js - Adaptador para src/services/api.js
+
+import api from '../services/api';
+
+// Funções de conveniência baseadas no cliente axios existente
+export const getData = async (path) => {
+  try {
+    const response = await api.get(path);
+    return response.data;
+  } catch (error) {
+    console.error(`[GET ${path}] Erro:`, error);
+    throw new Error(`Falha ao buscar dados: ${error.message}`);
+  }
 };
 
-export const getData = async (endpoint) => {
-  const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
-    method: 'GET',
-    headers: {
-      'x-admin-token': 'goldeouro123',
-    }
-  });
-  return await response.json();
+export const postData = async (path, body = {}) => {
+  try {
+    const response = await api.post(path, body);
+    return response.data;
+  } catch (error) {
+    console.error(`[POST ${path}] Erro:`, error);
+    throw new Error(`Falha ao enviar dados: ${error.message}`);
+  }
 };
 
-export default {
-  post: postData,
-  get: getData
+export const putData = async (path, body = {}) => {
+  try {
+    const response = await api.put(path, body);
+    return response.data;
+  } catch (error) {
+    console.error(`[PUT ${path}] Erro:`, error);
+    throw new Error(`Falha ao atualizar dados: ${error.message}`);
+  }
 };
+
+export const del = async (path) => {
+  try {
+    const response = await api.delete(path);
+    return response.data;
+  } catch (error) {
+    console.error(`[DELETE ${path}] Erro:`, error);
+    throw new Error(`Falha ao deletar dados: ${error.message}`);
+  }
+};
+
+// Exportar também o cliente api original
+export { default as api } from '../services/api';
+export * from '../services/api';

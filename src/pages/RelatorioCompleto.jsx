@@ -1,30 +1,10 @@
 import React from 'react';
 
 export default function RelatorioCompleto() {
-  const handleDownload = () => {
-    const url = import.meta.env.VITE_API_URL + '/admin/exportar/relatorio-completo-csv';
-    const token = import.meta.env.VITE_ADMIN_TOKEN;
-
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'x-admin-token': token,
-      },
-    })
-      .then(response => response.blob())
-      .then(blob => {
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = 'relatorio_completo.csv';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      })
-      .catch(error => {
-        console.error('Erro ao baixar o relatório:', error);
-        alert('Erro ao baixar o relatório.');
-      });
+  const handleExport = () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const url = API_URL + '/admin/exportar/relatorio-completo-csv';
+    window.open(url, "_blank");
   };
 
   return (
@@ -34,7 +14,7 @@ export default function RelatorioCompleto() {
         Clique no botão abaixo para exportar todos os dados em um único arquivo.
       </p>
       <button
-        onClick={handleDownload}
+        onClick={handleExport}
         className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded"
       >
         📥 Baixar Relatório Completo (CSV)

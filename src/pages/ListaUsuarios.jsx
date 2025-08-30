@@ -6,13 +6,20 @@ const ListaUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log('📦 Componente ListaUsuarios carregado');
+
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await api.get('/admin/lista-usuarios');
+        const response = await api.get('/admin/lista-usuarios', {
+          headers: {
+            'x-admin-token': 'goldeouro123',
+          },
+        });
+        console.log('👥 Dados recebidos:', response);
         setUsuarios(response.data);
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
+        console.error('❌ Erro ao buscar usuários:', error);
       } finally {
         setLoading(false);
       }
@@ -27,7 +34,8 @@ const ListaUsuarios = () => {
     return (
       <div className="bg-[#000717] text-white min-h-screen p-8 rounded shadow-md max-w-5xl mx-auto mt-10 text-center">
         <h1 className="text-2xl font-bold text-yellow-400 mb-6">Lista de Usuários</h1>
-        <p className="text-gray-400">Ainda não possui dados de usuários cadastrados...</p>
+        <p className="text-gray-400 mb-4">⚠️ Nenhum usuário cadastrado.</p>
+        <p className="text-xs text-yellow-500">Layout, roteamento e token estão funcionando!</p>
       </div>
     );
   }
@@ -55,16 +63,18 @@ const ListaUsuarios = () => {
             {usuarios.map((user) => (
               <tr key={user.id} className="text-center hover:bg-[#1a2a3d] text-sm transition">
                 <td className="px-4 py-2 border border-[#2c3e50] font-medium">{user.name}</td>
-                <td className="px-4 py-2 border border-[#2c3e50]">{user.email}</td>
+                <td className="px-4 py-2 border border-[#2c3e50]">
+                  {user.email || <span className="text-gray-500 italic">Não informado</span>}
+                </td>
                 <td className="px-4 py-2 border border-[#2c3e50]">
                   <span
                     className={`px-2 py-1 rounded text-xs font-bold ${
-                      user.account_status === 'blocked'
+                      String(user.account_status).includes('blocked')
                         ? 'bg-red-600 text-white'
                         : 'bg-green-600 text-white'
                     }`}
                   >
-                    {user.account_status === 'blocked' ? 'Bloqueado' : 'Ativo'}
+                    {String(user.account_status).includes('blocked') ? 'Bloqueado' : 'Ativo'}
                   </span>
                 </td>
                 <td className="px-4 py-2 border border-[#2c3e50]">

@@ -1,7 +1,6 @@
 // src/pages/LogsSistema.jsx
-
 import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
+import api from '../services/api';
 import Loader from '../components/Loader';
 
 export default function LogsSistema() {
@@ -11,15 +10,14 @@ export default function LogsSistema() {
   useEffect(() => {
     async function fetchLogs() {
       try {
-        const response = await postData('/admin/logs', {});
-        setLogs(response);
+        const { data } = await api.post('/admin/logs', {});
+        setLogs(data || []);
       } catch (error) {
-        console.error('Erro ao buscar logs:', error);
+        console.error('Erro ao buscar logs do sistema:', error?.message);
       } finally {
         setLoading(false);
       }
     }
-
     fetchLogs();
   }, []);
 

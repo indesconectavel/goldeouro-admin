@@ -2,7 +2,8 @@ import React from "react";
 
 const ExportarDados = () => {
   const handleExport = (tipo) => {
-    const url = import.meta.env.VITE_API_URL + `/admin/exportar/${tipo}`;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const url = API_URL + `/admin/exportar/${tipo}`;
     window.open(url, "_blank");
   };
 

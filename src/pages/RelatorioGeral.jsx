@@ -1,8 +1,9 @@
 import React from 'react';
 
 const RelatorioGeral = () => {
-  const exportarCSV = () => {
-    const url = import.meta.env.VITE_API_URL + '/admin/exportar/relatorio-geral-csv';
+  const handleExport = () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const url = API_URL + '/admin/exportar/relatorio-geral-csv';
     window.open(url, '_blank');
   };
 
@@ -16,7 +17,7 @@ const RelatorioGeral = () => {
           auditoria e conferência semanal.
         </p>
         <button
-          onClick={exportarCSV}
+          onClick={handleExport}
           className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-8 py-3 rounded-lg text-lg transition duration-200"
         >
           Exportar Relatório Completo

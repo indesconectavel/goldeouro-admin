@@ -24,9 +24,10 @@ const RelatorioUsuarios = () => {
     fetchUsuarios();
   }, []);
 
-  const exportarCSV = () => {
-    const url = import.meta.env.VITE_API_URL + '/admin/exportar/usuarios-csv';
-    window.open(url, '_blank');
+  const handleExport = () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const url = API_URL + '/admin/exportar/usuarios-csv';
+    window.open(url, "_blank");
   };
 
   return (
@@ -35,7 +36,7 @@ const RelatorioUsuarios = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-yellow-400">Relatório de Usuários</h1>
           <button
-            onClick={exportarCSV}
+            onClick={handleExport}
             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
           >
             Exportar CSV

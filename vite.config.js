@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -11,5 +11,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // 🔥 ESSENCIAL para permitir navegação direta com React Router
+    historyApiFallback: true,
   },
-})
+});

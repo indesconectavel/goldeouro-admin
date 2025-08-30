@@ -1,7 +1,6 @@
 // src/pages/ChutesRecentes.jsx
-
 import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
+import api from '../services/api';
 import Loader from '../components/Loader';
 
 export default function ChutesRecentes() {
@@ -11,15 +10,14 @@ export default function ChutesRecentes() {
   useEffect(() => {
     async function fetchChutes() {
       try {
-        const data = await postData('/admin/chutes-recentes', {});
-        setChutes(data);
+        const { data } = await api.post('/admin/chutes-recentes', {});
+        setChutes(data || []);
       } catch (error) {
-        console.error('Erro ao buscar chutes recentes:', error);
+        console.error('Erro ao buscar chutes recentes:', error?.message);
       } finally {
         setLoading(false);
       }
     }
-
     fetchChutes();
   }, []);
 
@@ -42,24 +40,22 @@ export default function ChutesRecentes() {
             <table className="min-w-full table-auto border border-border rounded-lg shadow-sm text-sm">
               <thead className="bg-[#111827] text-yellow-300 uppercase">
                 <tr>
-                  <th className="px-4 py-3 border border-border">Jogador</th>
-                  <th className="px-4 py-3 border border-border">Partida</th>
+                  <th className="px-4 py-3 border border-border">Usuário (ID)</th>
                   <th className="px-4 py-3 border border-border">Direção</th>
                   <th className="px-4 py-3 border border-border">Resultado</th>
                   <th className="px-4 py-3 border border-border">Data</th>
                 </tr>
               </thead>
               <tbody>
-                {chutes.map((chute) => (
-                  <tr key={chute.id} className="text-center hover:bg-muted/30">
-                    <td className="px-4 py-2 border border-border font-medium">{chute.user_name}</td>
-                    <td className="px-4 py-2 border border-border">#{chute.game_id}</td>
-                    <td className="px-4 py-2 border border-border">{chute.direction}</td>
-                    <td className={`px-4 py-2 border border-border font-semibold ${chute.scored ? 'text-green-500' : 'text-red-500'}`}>
-                      {chute.scored ? 'Gol' : 'Errou'}
+                {chutes.map((c) => (
+                  <tr key={c.id} className="text-center hover:bg-muted/30">
+                    <td className="px-4 py-2 border border-border font-medium">#{c.user_id}</td>
+                    <td className="px-4 py-2 border border-border">{c.shot_choice || '-'}</td>
+                    <td className={`px-4 py-2 border border-border font-semibold ${c.was_goal ? 'text-green-500' : 'text-red-500'}`}>
+                      {c.was_goal ? 'Gol' : 'Errou'}
                     </td>
                     <td className="px-4 py-2 border border-border">
-                      {new Date(chute.created_at).toLocaleString('pt-BR')}
+                      {new Date(c.shot_date).toLocaleString('pt-BR')}
                     </td>
                   </tr>
                 ))}
