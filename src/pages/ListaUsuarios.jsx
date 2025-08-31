@@ -11,15 +11,24 @@ const ListaUsuarios = () => {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await api.get('/admin/lista-usuarios', {
+        setLoading(true);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/lista-usuarios`, {
+          method: 'GET',
           headers: {
-            'x-admin-token': 'goldeouro123',
+            'Content-Type': 'application/json',
+            'x-admin-token': import.meta.env.VITE_ADMIN_TOKEN || '',
           },
         });
-        console.log('👥 Dados recebidos:', response);
-        setUsuarios(response.data);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setUsuarios(data);
       } catch (error) {
-        console.error('❌ Erro ao buscar usuários:', error);
+        console.error('Erro ao buscar usuários:', error);
+        // setError('Erro ao carregar lista de usuários'); // This line was not in the new_code, so it's removed.
       } finally {
         setLoading(false);
       }

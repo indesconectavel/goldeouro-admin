@@ -8,13 +8,32 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password === import.meta.env.VITE_ADMIN_TOKEN || password === "goldeouro123") {
-      login();
-      navigate("/painel");
-    } else {
-      setError("Senha incorreta. Tente novamente.");
+    setLoading(true);
+    setError('');
+
+    try {
+      // Validação básica
+      if (!username || !password) {
+        setError('Usuário e senha são obrigatórios');
+        return;
+      }
+
+      // Verificação de credenciais admin
+      if (password === import.meta.env.VITE_ADMIN_TOKEN) {
+        // Login bem-sucedido
+        setUser({ username, role: 'admin' });
+        localStorage.setItem('user', JSON.stringify({ username, role: 'admin' }));
+        navigate('/painel');
+      } else {
+        setError('Credenciais inválidas');
+      }
+    } catch (err) {
+      setError('Erro ao fazer login');
+      console.error('Erro no login:', err);
+    } finally {
+      setLoading(false);
     }
   };
 

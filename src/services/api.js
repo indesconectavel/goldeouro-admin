@@ -1,26 +1,33 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
+// Configuração base da API
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+// Instância axios configurada
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // ex.: http://localhost:3000
-  timeout: 15000,
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// adiciona o token em TODO request
+// Interceptor para adicionar token admin quando disponível
 api.interceptors.request.use((config) => {
-  const token = import.meta.env.VITE_ADMIN_TOKEN; // "goldeouro123" no .env do front
+  const token = import.meta.env.VITE_ADMIN_TOKEN;
   if (token) {
     config.headers['x-admin-token'] = token;
   }
   return config;
 });
 
-// (opcional) log de erro
+// Interceptor para tratamento de erros
 api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    console.error('[API ERROR]', err?.response?.status, err?.response?.data || err.message);
-    return Promise.reject(err);
+  (response) => response,
+  (error) => {
+    console.error('Erro na API:', error.response?.data || error.message);
+    return Promise.reject(error);
   }
 );
 
