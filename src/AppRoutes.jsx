@@ -5,13 +5,14 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
+import { LoadingComplete } from "./components/LoadingAnimations";
 
 // Função safeLazy para capturar erros de import
 const safeLazy = (importFunc, pageName) => {
   const LazyComponent = React.lazy(importFunc);
   
   return React.forwardRef((props, ref) => (
-    <Suspense fallback={<PageLoading />}>
+    <Suspense fallback={<LoadingComplete text={`Carregando ${pageName}...`} />}>
       <LazyComponent {...props} ref={ref} />
     </Suspense>
   ));

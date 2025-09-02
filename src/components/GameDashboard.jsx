@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../services/api';
+import { MemoizedStatCard } from './MemoizedComponents';
+import { useCache } from '../hooks/usePerformance';
 
 const GameDashboard = () => {
   const [stats, setStats] = useState({
@@ -16,6 +18,38 @@ const GameDashboard = () => {
   const [recentGames, setRecentGames] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Cache para estatísticas
+  const { data: cachedStats, fetchData: fetchStats } = useCache(
+    'game-stats',
+    () => api.get('/games/stats').then(res => res.data.data),
+    30000 // 30 segundos de cache
+  );
+
+  // Cache para jogos recentes
+  const { data: cachedGames, fetchData: fetchGames } = useCache(
+    'recent-games',
+    () => api.get('/games/recent').then(res => res.data.data),
+    30000 // 30 segundos de cache
+  );
+
+  const loadStats = useCallback(async () => {
+    try {
+      const data = await fetchStats();
+      setStats(data);
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+    }
+  }, [fetchStats]);
+
+  const loadRecentGames = useCallback(async () => {
+    try {
+      const data = await fetchGames();
+      setRecentGames(data);
+    } catch (error) {
+      console.error('Erro ao carregar jogos recentes:', error);
+    }
+  }, [fetchGames]);
+
   useEffect(() => {
     loadStats();
     loadRecentGames();
@@ -27,37 +61,17 @@ const GameDashboard = () => {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [loadStats, loadRecentGames]);
 
-  const loadStats = async () => {
-    try {
-      const response = await api.get('/games/estatisticas');
-      if (response.data.success) {
-        setStats(response.data.data);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadRecentGames = async () => {
-    try {
-      // TODO: Implementar endpoint para jogos recentes
-      // const response = await api.get('/games/recent');
-      // setRecentGames(response.data.data || []);
-    } catch (error) {
-      console.error('Erro ao carregar jogos recentes:', error);
-    }
-  };
-
-  const formatCurrency = (value) => {
+  // Função para formatar moeda
+  const formatCurrency = useCallback((value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
-  };
+  }, []);
+
+
 
   const formatNumber = (value) => {
     return new Intl.NumberFormat('pt-BR').format(value);
@@ -82,73 +96,29 @@ const GameDashboard = () => {
     <div className="space-y-6">
       {/* Cards de Estatísticas */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-[#1A202C] rounded-lg p-4 border border-gray-700"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-yellow-400 text-sm font-medium">Total de Jogos</p>
-              <p className="text-2xl font-bold text-white">{formatNumber(stats.totalGames)}</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">🎮</span>
-            </div>
-          </div>
-        </motion.div>
+        <MemoizedStatCard
+          title="Total de Jogos"
+          value={formatNumber(stats.totalGames)}
+          icon="🎮"
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-[#1A202C] rounded-lg p-4 border border-gray-700"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-yellow-400 text-sm font-medium">Total de Jogadores</p>
-              <p className="text-2xl font-bold text-white">{formatNumber(stats.totalPlayers)}</p>
-            </div>
-            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">👥</span>
-            </div>
-          </div>
-        </motion.div>
+        <MemoizedStatCard
+          title="Total de Jogadores"
+          value={formatNumber(stats.totalPlayers)}
+          icon="👥"
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-[#1A202C] rounded-lg p-4 border border-gray-700"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-yellow-400 text-sm font-medium">Prêmios Pagos</p>
-              <p className="text-2xl font-bold text-white">{formatCurrency(stats.totalPrizes)}</p>
-            </div>
-            <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">💰</span>
-            </div>
-          </div>
-        </motion.div>
+        <MemoizedStatCard
+          title="Prêmios Pagos"
+          value={formatCurrency(stats.totalPrizes)}
+          icon="💰"
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-[#1A202C] rounded-lg p-4 border border-gray-700"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-yellow-400 text-sm font-medium">Total de Chutes</p>
-              <p className="text-2xl font-bold text-white">{formatNumber(stats.totalShots)}</p>
-            </div>
-            <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">⚽</span>
-            </div>
-          </div>
-        </motion.div>
+        <MemoizedStatCard
+          title="Total de Chutes"
+          value={formatNumber(stats.totalShots)}
+          icon="⚽"
+        />
       </div>
 
       {/* Cards Especiais */}

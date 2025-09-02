@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useSound from '../hooks/useSound';
 
 const FootballField = ({ shotOptions, onShotSelect, gameStatus, isShooting, shotResult, isGoldenGoal }) => {
   const [selectedZone, setSelectedZone] = useState(null);
@@ -7,6 +8,25 @@ const FootballField = ({ shotOptions, onShotSelect, gameStatus, isShooting, shot
   const [showAnimation, setShowAnimation] = useState(false);
   const [animationPhase, setAnimationPhase] = useState('idle'); // idle, shooting, result
   const [goalkeeperPosition, setGoalkeeperPosition] = useState({ x: 0, y: 0 });
+  const { sounds } = useSound();
+
+  // Tocar sons baseados no resultado do chute
+  useEffect(() => {
+    if (shotResult) {
+      if (shotResult === 'goal') {
+        if (isGoldenGoal) {
+          sounds.goldenGoal();
+          sounds.crowdCheer();
+        } else {
+          sounds.goal();
+          sounds.crowdCheer();
+        }
+      } else if (shotResult === 'miss') {
+        sounds.miss();
+        sounds.crowdDisappoint();
+      }
+    }
+  }, [shotResult, isGoldenGoal, sounds]);
 
   const handleZoneClick = (option) => {
     if (gameStatus !== 'active' || isShooting) return;
@@ -14,6 +34,9 @@ const FootballField = ({ shotOptions, onShotSelect, gameStatus, isShooting, shot
     setSelectedZone(option.id);
     setShowAnimation(true);
     setAnimationPhase('shooting');
+    
+    // Tocar som do chute
+    sounds.ballKick();
     
     // Animar a bola e goleiro
     animateBall(option);

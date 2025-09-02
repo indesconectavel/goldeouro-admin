@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
 import useSocket from '../hooks/useSocket';
+import useSound from '../hooks/useSound';
+import { LoadingComplete, ButtonLoading } from './LoadingAnimations';
 
 const QueueSystem = () => {
   const [queueData, setQueueData] = useState({
@@ -13,9 +15,13 @@ const QueueSystem = () => {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isJoining, setIsJoining] = useState(false);
   
   // Hook do Socket.io
   const { isConnected, joinQueue, leaveQueue, useSocketEvent } = useSocket();
+  
+  // Hook de efeitos sonoros
+  const { sounds } = useSound();
 
   useEffect(() => {
     loadQueueData();
@@ -65,6 +71,7 @@ const QueueSystem = () => {
   };
 
   const enterQueue = async () => {
+    setIsJoining(true);
     try {
       const response = await api.post('/games/fila/entrar', {
         user_id: 1 // TODO: Pegar do contexto de autenticação
@@ -77,12 +84,17 @@ const QueueSystem = () => {
           userPosition: response.data.data.position
         }));
         
+        // Tocar som de entrada na fila
+        sounds.queueJoin();
+        
         // Entrar na sala de fila via WebSocket
         joinQueue();
       }
     } catch (error) {
       console.error('Erro ao entrar na fila:', error);
       alert(error.response?.data?.message || 'Erro ao entrar na fila');
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -95,6 +107,9 @@ const QueueSystem = () => {
         userPosition: 0
       }));
       
+      // Tocar som de saída da fila
+      sounds.queueLeave();
+      
       // Sair da sala de fila via WebSocket
       leaveQueue();
     } catch (error) {
@@ -104,15 +119,13 @@ const QueueSystem = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-[#1A202C] rounded-lg p-6 border border-gray-700">
-        <div className="animate-pulse">
-          <div className="h-6 bg-gray-600 rounded w-1/3 mb-4"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-600 rounded"></div>
-            ))}
-          </div>
-        </div>
+      <div className="bg-[#1A202C] rounded-lg p-8 border border-gray-700">
+        <LoadingComplete 
+          text="Carregando dados da fila..." 
+          size="lg"
+          spinnerColor="yellow"
+          textColor="white"
+        />
       </div>
     );
   }
@@ -182,16 +195,33 @@ const QueueSystem = () => {
         <div className="flex gap-4">
           {!queueData.userInQueue ? (
             <motion.button
-              onClick={enterQueue}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200"
+              onClick={() => {
+                if (!isJoining) {
+                  sounds.buttonClick();
+                  enterQueue();
+                }
+              }}
+              onMouseEnter={() => sounds.buttonHover()}
+              whileHover={{ scale: isJoining ? 1 : 1.05 }}
+              whileTap={{ scale: isJoining ? 1 : 0.95 }}
+              disabled={isJoining}
+              className={`bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 ${
+                isJoining ? 'opacity-75 cursor-not-allowed' : ''
+              }`}
             >
-              🏃🏽‍♂️ Entrar na Fila
+              {isJoining ? (
+                <ButtonLoading text="Entrando..." />
+              ) : (
+                '🏃🏽‍♂️ Entrar na Fila'
+              )}
             </motion.button>
           ) : (
             <motion.button
-              onClick={leaveQueue}
+              onClick={() => {
+                sounds.buttonClick();
+                handleLeaveQueue();
+              }}
+              onMouseEnter={() => sounds.buttonHover()}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200"
