@@ -57,10 +57,10 @@ const TopJogadores = () => {
                   <tr key={jogador.id || index} className="text-sm text-center hover:bg-muted/30">
                     <td className="px-4 py-2 border border-border font-bold">{index + 1}</td>
                     <td className="px-4 py-2 border border-border">{jogador.name}</td>
-                    <td className="px-4 py-2 border border-border">{jogador.totalGols}</td>
-                    <td className="px-4 py-2 border border-border">{jogador.totalPartidas}</td>
+                    <td className="px-4 py-2 border border-border">{jogador.goals_scored}</td>
+                    <td className="px-4 py-2 border border-border">-</td>
                     <td className="px-4 py-2 border border-border">
-                      {jogador.eficiencia ? `${jogador.eficiencia.toFixed(1)}%` : "0%"}
+                      {jogador.goals_scored > 0 ? "100%" : "0%"}
                     </td>
                   </tr>
                 ))}

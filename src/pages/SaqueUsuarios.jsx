@@ -42,7 +42,7 @@ const SaqueUsuarios = () => {
             <h1 className="text-2xl font-bold text-yellow-600">Relatório de Saques</h1>
             <button
               onClick={handleExport}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
             >
               Exportar CSV
             </button>
@@ -64,7 +64,7 @@ const SaqueUsuarios = () => {
             <h1 className="text-2xl font-bold text-yellow-600">Relatório de Saques</h1>
             <button
               onClick={handleExport}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
             >
               Exportar CSV
             </button>
@@ -95,7 +95,7 @@ const SaqueUsuarios = () => {
           <h1 className="text-2xl font-bold text-yellow-600">Relatório de Saques</h1>
           <button
             onClick={handleExport}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded"
           >
             Exportar CSV
           </button>

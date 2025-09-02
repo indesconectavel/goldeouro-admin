@@ -7,6 +7,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,19 +16,25 @@ export default function Login() {
 
     try {
       // Validação básica
-      if (!username || !password) {
-        setError('Usuário e senha são obrigatórios');
+      if (!password) {
+        setError('Senha é obrigatória');
         return;
       }
 
+      // Token admin hardcoded para desenvolvimento
+      const adminToken = 'adm_8d1e3c7a5b9f2a4c6e0d1f3b7a9c5e2d';
+      
       // Verificação de credenciais admin
-      if (password === import.meta.env.VITE_ADMIN_TOKEN) {
+      if (password === adminToken) {
         // Login bem-sucedido
-        setUser({ username, role: 'admin' });
-        localStorage.setItem('user', JSON.stringify({ username, role: 'admin' }));
-        navigate('/painel');
+        const success = login(adminToken);
+        if (success) {
+          navigate('/painel');
+        } else {
+          setError('Erro ao salvar token');
+        }
       } else {
-        setError('Credenciais inválidas');
+        setError('Senha incorreta');
       }
     } catch (err) {
       setError('Erro ao fazer login');
@@ -61,9 +68,10 @@ export default function Login() {
           )}
           <button
             type="submit"
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+            disabled={loading}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 text-black font-bold py-2 px-4 rounded"
           >
-            Entrar
+            {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
       </div>

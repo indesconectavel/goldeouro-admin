@@ -18,7 +18,7 @@ const RelatorioGeral = () => {
         </p>
         <button
           onClick={handleExport}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-8 py-3 rounded-lg text-lg transition duration-200"
+          className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-3 rounded-lg text-lg transition duration-200"
         >
           Exportar Relatório Completo
         </button>

@@ -153,6 +153,9 @@ const Sidebar = () => {
                 <Link to="/fila" className={linkClasses('/fila')}>
                   Fila de Chute
                 </Link>
+                <Link to="/jogo" className={linkClasses('/jogo')}>
+                  🎮 Jogar
+                </Link>
               </div>
             )}
           </div>

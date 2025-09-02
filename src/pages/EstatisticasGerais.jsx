@@ -65,11 +65,13 @@ export default function EstatisticasGerais() {
   }
 
   const {
-    totalUsuarios,
-    usuariosAtivos,
-    usuariosBloqueados,
-    totalPartidas,
-    mediaGolsPorPartida
+    total_users,
+    total_games,
+    total_transactions,
+    total_credited,
+    total_paid,
+    profit,
+    average_shots_per_user
   } = estatisticas;
 
   return (
@@ -77,26 +79,36 @@ export default function EstatisticasGerais() {
       <div className="bg-card p-6 rounded shadow-md max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-yellow-400 mb-6">Estatísticas Gerais</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm sm:text-base">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm sm:text-base">
           <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center">
             <p className="text-gray-300">Total de Usuários</p>
-            <h2 className="text-xl font-bold text-white">{totalUsuarios}</h2>
+            <h2 className="text-xl font-bold text-white">{total_users}</h2>
           </div>
           <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center">
-            <p className="text-gray-300">Usuários Ativos</p>
-            <h2 className="text-xl font-bold text-green-400">{usuariosAtivos}</h2>
+            <p className="text-gray-300">Total de Jogos</p>
+            <h2 className="text-xl font-bold text-blue-400">{total_games}</h2>
           </div>
           <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center">
-            <p className="text-gray-300">Usuários Bloqueados</p>
-            <h2 className="text-xl font-bold text-red-400">{usuariosBloqueados}</h2>
+            <p className="text-gray-300">Total de Transações</p>
+            <h2 className="text-xl font-bold text-green-400">{total_transactions}</h2>
           </div>
           <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center">
-            <p className="text-gray-300">Partidas Finalizadas</p>
-            <h2 className="text-xl font-bold text-white">{totalPartidas}</h2>
+            <p className="text-gray-300">Total Creditado</p>
+            <h2 className="text-xl font-bold text-green-400">R$ {total_credited}</h2>
           </div>
-          <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center sm:col-span-2">
-            <p className="text-gray-300">Média de Gols por Partida</p>
-            <h2 className="text-xl font-bold text-yellow-400">{mediaGolsPorPartida}</h2>
+          <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center">
+            <p className="text-gray-300">Total Pago</p>
+            <h2 className="text-xl font-bold text-red-400">R$ {total_paid}</h2>
+          </div>
+          <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center">
+            <p className="text-gray-300">Lucro/Prejuízo</p>
+            <h2 className={`text-xl font-bold ${profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              R$ {profit}
+            </h2>
+          </div>
+          <div className="bg-[#1f2937] p-4 rounded-lg shadow text-center sm:col-span-2 lg:col-span-3">
+            <p className="text-gray-300">Média de Chutes por Usuário</p>
+            <h2 className="text-xl font-bold text-yellow-400">{average_shots_per_user}</h2>
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@ const RelatorioSaques = () => {
         <h1 className="text-2xl font-bold text-yellow-400">Relatório de Saques</h1>
         <button
           onClick={handleExport}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
+          className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded"
         >
           Exportar CSV
         </button>

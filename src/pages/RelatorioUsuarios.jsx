@@ -37,7 +37,7 @@ const RelatorioUsuarios = () => {
           <h1 className="text-2xl font-bold text-yellow-400">Relatório de Usuários</h1>
           <button
             onClick={handleExport}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded"
           >
             Exportar CSV
           </button>
@@ -74,16 +74,16 @@ const RelatorioUsuarios = () => {
                         {usuario.name}
                       </Link>
                     </td>
-                    <td className="px-4 py-2 border border-border">{usuario.totalChutes}</td>
-                    <td className="px-4 py-2 border border-border">{usuario.totalGols}</td>
+                    <td className="px-4 py-2 border border-border">{usuario.total_shots}</td>
+                    <td className="px-4 py-2 border border-border">{usuario.goals_scored}</td>
                     <td className="px-4 py-2 border border-border text-green-400 font-semibold">
-                      R$ {usuario.totalCreditos}
+                      R$ {usuario.total_credits}
                     </td>
                     <td className="px-4 py-2 border border-border text-red-400 font-semibold">
-                      R$ {usuario.totalDebitos}
+                      R$ {usuario.total_debits}
                     </td>
                     <td className="px-4 py-2 border border-border font-bold">
-                      R$ {usuario.saldo}
+                      R$ {usuario.balance}
                     </td>
                   </tr>
                 ))}

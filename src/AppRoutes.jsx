@@ -3,6 +3,8 @@
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
 
 // Função safeLazy para capturar erros de import
 const safeLazy = (importFunc, pageName) => {
@@ -56,6 +58,7 @@ const Configuracoes = safeLazy(() => import("./pages/Configuracoes"), "Configura
 const ExportarDados = safeLazy(() => import("./pages/ExportarDados"), "Exportar Dados");
 const LogsSistema = safeLazy(() => import("./pages/LogsSistema"), "Logs do Sistema");
 const ChutesRecentes = safeLazy(() => import("./pages/ChutesRecentes"), "Chutes Recentes");
+const Game = safeLazy(() => import("./pages/Game"), "Jogo");
 
 // Componente de loading para Suspense
 const PageLoading = () => (
@@ -70,7 +73,15 @@ const PageLoading = () => (
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
+      {/* Rota pública */}
+      <Route path="/login" element={<Login />} />
+      
+      {/* Rotas protegidas */}
+      <Route path="/*" element={
+        <ProtectedRoute>
+          <MainLayout />
+        </ProtectedRoute>
+      }>
         {/* Rota raiz redireciona para /painel */}
         <Route index element={<Navigate to="/painel" replace />} />
         
@@ -97,6 +108,7 @@ export default function AppRoutes() {
         <Route path="exportar-dados" element={<ExportarDados />} />
         <Route path="logs" element={<LogsSistema />} />
         <Route path="chutes" element={<ChutesRecentes />} />
+        <Route path="jogo" element={<Game />} />
         
         {/* Fallback para rotas inexistentes */}
         <Route path="*" element={<Navigate to="/painel" replace />} />

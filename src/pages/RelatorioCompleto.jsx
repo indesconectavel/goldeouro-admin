@@ -15,7 +15,7 @@ export default function RelatorioCompleto() {
       </p>
       <button
         onClick={handleExport}
-        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded"
+        className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded"
       >
         📥 Baixar Relatório Completo (CSV)
       </button>

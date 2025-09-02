@@ -19,35 +19,35 @@ const ExportarDados = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <button
             onClick={() => handleExport("usuarios-csv")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded transition"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded transition"
           >
             Exportar Usuários
           </button>
 
           <button
             onClick={() => handleExport("chutes-csv")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded transition"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded transition"
           >
             Exportar Chutes
           </button>
 
           <button
             onClick={() => handleExport("transacoes-csv")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded transition"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded transition"
           >
             Exportar Transações
           </button>
 
           <button
             onClick={() => handleExport("saques-csv")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded transition"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded transition"
           >
             Exportar Saques
           </button>
 
           <button
             onClick={() => handleExport("relatorio-geral-csv")}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded transition col-span-full"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded transition col-span-full"
           >
             Exportar Relatório Geral
           </button>
