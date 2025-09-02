@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
+import useSocket from '../hooks/useSocket';
 
 const QueueSystem = () => {
   const [queueData, setQueueData] = useState({
@@ -12,15 +13,24 @@ const QueueSystem = () => {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Hook do Socket.io
+  const { isConnected, joinQueue, leaveQueue, useSocketEvent } = useSocket();
 
   useEffect(() => {
     loadQueueData();
     
-    // Atualizar dados da fila a cada 5 segundos
-    const interval = setInterval(loadQueueData, 5000);
+    // Atualizar dados da fila a cada 10 segundos (menos frequente com WebSockets)
+    const interval = setInterval(loadQueueData, 10000);
 
     return () => clearInterval(interval);
   }, []);
+
+  // Escutar atualizações da fila via WebSocket
+  useSocketEvent('queue-updated', () => {
+    console.log('🔄 Fila atualizada via WebSocket');
+    loadQueueData();
+  });
 
   const loadQueueData = async () => {
     try {
@@ -66,6 +76,9 @@ const QueueSystem = () => {
           userInQueue: true,
           userPosition: response.data.data.position
         }));
+        
+        // Entrar na sala de fila via WebSocket
+        joinQueue();
       }
     } catch (error) {
       console.error('Erro ao entrar na fila:', error);
@@ -73,7 +86,7 @@ const QueueSystem = () => {
     }
   };
 
-  const leaveQueue = async () => {
+  const handleLeaveQueue = async () => {
     try {
       // TODO: Implementar endpoint para sair da fila
       setQueueData(prev => ({
@@ -81,6 +94,9 @@ const QueueSystem = () => {
         userInQueue: false,
         userPosition: 0
       }));
+      
+      // Sair da sala de fila via WebSocket
+      leaveQueue();
     } catch (error) {
       console.error('Erro ao sair da fila:', error);
     }
@@ -110,7 +126,18 @@ const QueueSystem = () => {
         className="bg-[#1A202C] rounded-lg p-4 border border-gray-700"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-white">🎮 Fila de Jogadores</h3>
+          <div className="flex items-center space-x-3">
+            <h3 className="text-xl font-bold text-white">🎮 Fila de Jogadores</h3>
+            {/* Indicador de conexão WebSocket */}
+            <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${
+              isConnected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                isConnected ? 'bg-white' : 'bg-white animate-pulse'
+              }`}></div>
+              <span>{isConnected ? 'Online' : 'Offline'}</span>
+            </div>
+          </div>
           <div className={`px-4 py-2 rounded-full text-sm font-bold text-center ${
             queueData.currentGame?.status === 'active' 
               ? 'bg-green-500 text-white' 

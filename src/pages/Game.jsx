@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../services/api';
 import FootballField from '../components/FootballField';
+import useSocket from '../hooks/useSocket';
 
 const Game = () => {
   const [gameState, setGameState] = useState({
@@ -20,10 +21,24 @@ const Game = () => {
   const [showGoldenGoal, setShowGoldenGoal] = useState(false);
   const [nextGoldenGoal, setNextGoldenGoal] = useState(0);
 
+  // Hook do Socket.io
+  const { isConnected, joinQueue, leaveQueue, joinGame, leaveGame, notifyShot, useSocketEvent } = useSocket();
+
   // Carregar opções de chute e dados iniciais
   useEffect(() => {
     loadInitialData();
   }, []);
+
+  // Escutar eventos de WebSocket
+  useSocketEvent('queue-updated', () => {
+    console.log('🔄 Fila atualizada via WebSocket');
+    checkQueueStatus();
+  });
+
+  useSocketEvent('shot-result', (data) => {
+    console.log('⚽ Resultado de chute recebido:', data);
+    // Atualizar interface com resultado de outro jogador
+  });
 
   const loadInitialData = async () => {
     try {
@@ -94,6 +109,9 @@ const Game = () => {
           setShowGoldenGoal(true);
           setTimeout(() => setShowGoldenGoal(false), 5000);
         }
+
+        // Notificar resultado via WebSocket
+        notifyShot(gameState.gameId, shotResult, result.is_golden_goal);
 
         // Atualizar estatísticas
         loadInitialData();
