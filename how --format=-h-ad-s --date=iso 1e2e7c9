@@ -1,0 +1,13 @@
+[33mf04bb2d[m[33m ([m[1;36mHEAD[m[33m)[m ✅ Painel admin Gol de Ouro revisado e pronto para produção
+[33m9bff137[m Nova estrutura do painel Gol de Ouro 100% funcional
+[33mdbec54e[m Modo diagnóstico: desativa auth temporariamente
+[33m69c3b36[m Corrige estrutura completa das páginas do painel
+[33me83560b[m Corrige erro de rotas duplicadas e tela branca
+[33mf0144a8[m Corrige tela branca e atualiza layout com sidebar
+[33mdbb443b[m ✅ Corrige CORS para permitir acesso do frontend (Vercel)
+[33m906ddb6[m Move api.js para src/js e ajusta imports
+[33m7b3f515[m Corrige build do Tailwind para Vercel
+[33m0a832ac[m Conecta painel ao backend na nuvem
+[33m7a7baa8[m Adiciona todos os botões ao painel
+[33m6fc725a[m Adiciona botão de Relatório por Usuário no painel
+[33m08abacc[m Painel Admin Gol de Ouro v1

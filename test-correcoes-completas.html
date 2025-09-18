@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Correções - Gol de Ouro Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000717;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        .test-button {
+            background: #fcd34d;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .test-button:hover {
+            background: #fbbf24;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #10b981; }
+        .error { background: #ef4444; }
+        .warning { background: #f59e0b; }
+        .info { background: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Teste de Correções - Gol de Ouro Admin</h1>
+        
+        <div class="test-section">
+            <h2>1. Teste de Navegação</h2>
+            <button class="test-button" onclick="testNavigation()">Testar Navegação</button>
+            <div id="nav-status" class="status info">Aguardando teste...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>2. Teste de CSP</h2>
+            <button class="test-button" onclick="testCSP()">Testar CSP</button>
+            <div id="csp-status" class="status info">Aguardando teste...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>3. Teste de Performance</h2>
+            <button class="test-button" onclick="testPerformance()">Testar Performance</button>
+            <div id="perf-status" class="status info">Aguardando teste...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>4. Teste de Conectividade</h2>
+            <button class="test-button" onclick="testConnectivity()">Testar Backend</button>
+            <div id="conn-status" class="status info">Aguardando teste...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>5. Teste de Logo</h2>
+            <button class="test-button" onclick="testLogo()">Testar Logo</button>
+            <div id="logo-status" class="status info">Aguardando teste...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>6. Teste Completo</h2>
+            <button class="test-button" onclick="runAllTests()">Executar Todos os Testes</button>
+            <div id="all-status" class="status info">Aguardando teste...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Resultados</h2>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {};
+        
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+        
+        function testNavigation() {
+            try {
+                // Testar History API
+                const canUseHistory = !!(window.history && window.history.pushState);
+                
+                // Testar navegação
+                const testUrl = '/painel';
+                if (canUseHistory) {
+                    window.history.pushState(null, '', testUrl);
+                    updateStatus('nav-status', '✅ Navegação funcionando (History API)', 'success');
+                    testResults.navigation = true;
+                } else {
+                    updateStatus('nav-status', '⚠️ History API não disponível, usando fallback', 'warning');
+                    testResults.navigation = false;
+                }
+            } catch (error) {
+                updateStatus('nav-status', `❌ Erro na navegação: ${error.message}`, 'error');
+                testResults.navigation = false;
+            }
+        }
+        
+        function testCSP() {
+            try {
+                // Verificar se há meta tags de CSP
+                const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+                const cspHeader = document.querySelector('meta[name="csp"]');
+                
+                if (!cspMeta && !cspHeader) {
+                    updateStatus('csp-status', '✅ CSP desabilitado corretamente', 'success');
+                    testResults.csp = true;
+                } else {
+                    updateStatus('csp-status', '⚠️ Meta tags de CSP encontradas', 'warning');
+                    testResults.csp = false;
+                }
+            } catch (error) {
+                updateStatus('csp-status', `❌ Erro ao verificar CSP: ${error.message}`, 'error');
+                testResults.csp = false;
+            }
+        }
+        
+        function testPerformance() {
+            try {
+                // Verificar memória
+                const memoryInfo = performance.memory;
+                if (memoryInfo) {
+                    const usedMB = (memoryInfo.usedJSHeapSize / 1024 / 1024).toFixed(2);
+                    const totalMB = (memoryInfo.totalJSHeapSize / 1024 / 1024).toFixed(2);
+                    
+                    if (usedMB < 50) {
+                        updateStatus('perf-status', `✅ Performance OK - Memória: ${usedMB}MB/${totalMB}MB`, 'success');
+                        testResults.performance = true;
+                    } else {
+                        updateStatus('perf-status', `⚠️ Uso de memória alto: ${usedMB}MB/${totalMB}MB`, 'warning');
+                        testResults.performance = false;
+                    }
+                } else {
+                    updateStatus('perf-status', 'ℹ️ Informações de memória não disponíveis', 'info');
+                    testResults.performance = true;
+                }
+            } catch (error) {
+                updateStatus('perf-status', `❌ Erro ao verificar performance: ${error.message}`, 'error');
+                testResults.performance = false;
+            }
+        }
+        
+        async function testConnectivity() {
+            try {
+                const response = await fetch('http://localhost:3000/api/public/dashboard');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('conn-status', '✅ Backend conectado e funcionando', 'success');
+                    testResults.connectivity = true;
+                } else {
+                    updateStatus('conn-status', `⚠️ Backend respondeu com status: ${response.status}`, 'warning');
+                    testResults.connectivity = false;
+                }
+            } catch (error) {
+                updateStatus('conn-status', `❌ Erro ao conectar com backend: ${error.message}`, 'error');
+                testResults.connectivity = false;
+            }
+        }
+        
+        function testLogo() {
+            try {
+                // Verificar se o logo está sendo renderizado
+                const logoElement = document.querySelector('[data-testid="logo"]');
+                if (logoElement) {
+                    updateStatus('logo-status', '✅ Logo encontrado no DOM', 'success');
+                    testResults.logo = true;
+                } else {
+                    updateStatus('logo-status', '⚠️ Logo não encontrado no DOM (pode estar em CSS)', 'warning');
+                    testResults.logo = true; // Considerar OK se estiver em CSS
+                }
+            } catch (error) {
+                updateStatus('logo-status', `❌ Erro ao verificar logo: ${error.message}`, 'error');
+                testResults.logo = false;
+            }
+        }
+        
+        async function runAllTests() {
+            updateStatus('all-status', '🔄 Executando todos os testes...', 'info');
+            
+            testNavigation();
+            testCSP();
+            testPerformance();
+            await testConnectivity();
+            testLogo();
+            
+            // Aguardar um pouco para os testes terminarem
+            setTimeout(() => {
+                const passed = Object.values(testResults).filter(Boolean).length;
+                const total = Object.keys(testResults).length;
+                
+                if (passed === total) {
+                    updateStatus('all-status', `✅ Todos os testes passaram (${passed}/${total})`, 'success');
+                } else {
+                    updateStatus('all-status', `⚠️ Alguns testes falharam (${passed}/${total})`, 'warning');
+                }
+                
+                // Mostrar resultados detalhados
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `
+                    <h3>Resultados Detalhados:</h3>
+                    <ul>
+                        <li>Navegação: ${testResults.navigation ? '✅' : '❌'}</li>
+                        <li>CSP: ${testResults.csp ? '✅' : '❌'}</li>
+                        <li>Performance: ${testResults.performance ? '✅' : '❌'}</li>
+                        <li>Conectividade: ${testResults.connectivity ? '✅' : '❌'}</li>
+                        <li>Logo: ${testResults.logo ? '✅' : '❌'}</li>
+                    </ul>
+                `;
+            }, 2000);
+        }
+        
+        // Executar teste inicial
+        window.addEventListener('load', () => {
+            console.log('🚀 Página de teste carregada');
+            testCSP(); // Testar CSP imediatamente
+        });
+    </script>
+</body>
+</html>

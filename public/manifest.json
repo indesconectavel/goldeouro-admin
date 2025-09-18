@@ -1,0 +1,16 @@
+﻿{
+  "name": "Gol de Ouro Admin",
+  "short_name": "Gol de Ouro",
+  "description": "Painel administrativo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000717",
+  "theme_color": "#FCD34D",
+  "icons": [
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ]
+}

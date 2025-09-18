@@ -1,0 +1,142 @@
+{
+  "files": [
+    {
+      "file": "src/App.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/components/Navigation.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/pages/ExportarDados.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/pages/Saques.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/pages/Dashboard.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/pages/ListaUsuarios.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/pages/Configuracoes.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/pages/Backup.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/services/authService.js",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/utils/securityLogger.js",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/utils/validation.js",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/hooks/usePWA.js",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "src/components/PWAInstallPrompt.jsx",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "public/manifest.json",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "public/sw.js",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "jest.config.cjs",
+      "exists": true,
+      "status": "✅"
+    },
+    {
+      "file": "package.json",
+      "exists": true,
+      "status": "✅"
+    }
+  ],
+  "functionalities": [
+    {
+      "functionality": "Sistema de Navegação",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "Página de Saques",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "Página de Exportar Dados",
+      "working": false,
+      "status": "❌"
+    },
+    {
+      "functionality": "Sistema de Autenticação",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "Sistema de Validação",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "Sistema de Segurança",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "PWA (Progressive Web App)",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "Sistema de Testes",
+      "working": true,
+      "status": "✅"
+    },
+    {
+      "functionality": "Sistema de Cache",
+      "working": false,
+      "status": "❌"
+    },
+    {
+      "functionality": "Sistema de Monitoramento",
+      "working": false,
+      "status": "❌"
+    }
+  ],
+  "overall": "FAILED"
+}

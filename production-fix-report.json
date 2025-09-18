@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-09-07T20:05:48.460Z",
+  "version": "4.1.0",
+  "environment": "production",
+  "fixes": [
+    "Content Security Policy corrigido",
+    "Google Fonts permitido",
+    "Domínios de produção adicionados",
+    "Headers de segurança configurados",
+    "Build de produção otimizado"
+  ],
+  "csp": {
+    "scriptSrc": "'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://fonts.gstatic.com https://admin.goldeouro.lol https://goldeouro-admin.vercel.app",
+    "styleSrc": "'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com",
+    "fontSrc": "'self' https://fonts.gstatic.com",
+    "imgSrc": "'self' data: https: blob:",
+    "connectSrc": "'self' https://admin.goldeouro.lol https://goldeouro-admin.vercel.app https://api.goldeouro.lol"
+  },
+  "status": "READY_FOR_DEPLOY"
+}

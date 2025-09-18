@@ -1,0 +1,125 @@
+// src/pages/RelatorioUsuarios.jsx
+
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../services/api';
+import Loader from '../components/Loader';
+
+const RelatorioUsuarios = () => {
+  const [usuarios, setUsuarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const response = await api.post('/admin/relatorio-usuarios', {});
+        setUsuarios(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+        // Dados de fallback para demonstração
+        const mockUsuarios = [
+          {
+            id: 1,
+            nome: 'João Silva',
+            email: 'joao@email.com',
+            status: 'ativo',
+            saldo: 150.00,
+            created_at: '2025-01-07T10:00:00Z',
+            ultimo_acesso: '2025-01-07T15:30:00Z',
+            total_apostas: 25,
+            total_ganhos: 75.50
+          },
+          {
+            id: 2,
+            nome: 'Maria Santos',
+            email: 'maria@email.com',
+            status: 'ativo',
+            saldo: 75.50,
+            created_at: '2025-01-06T14:20:00Z',
+            ultimo_acesso: '2025-01-07T12:15:00Z',
+            total_apostas: 18,
+            total_ganhos: 45.20
+          }
+        ];
+        setUsuarios(mockUsuarios);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsuarios();
+  }, []);
+
+  const handleExport = () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const url = API_URL + '/admin/exportar/usuarios-csv';
+    window.open(url, "_blank");
+  };
+
+  return (
+    <div className="bg-background text-foreground min-h-screen p-6">
+      <div className="bg-card text-foreground p-8 rounded shadow-md max-w-7xl mx-auto mt-10">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-yellow-400">Relatório de Usuários</h1>
+          <button
+            onClick={handleExport}
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded"
+          >
+            Exportar CSV
+          </button>
+        </div>
+
+        {loading ? (
+          <Loader />
+        ) : usuarios.length === 0 ? (
+          <p className="text-center text-muted-foreground mt-10">Ainda não possui dados...</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto border border-border rounded-lg shadow-sm">
+              <thead className="bg-[#111827] text-yellow-300 uppercase text-sm">
+                <tr>
+                  <th className="px-4 py-3 border border-border">Nome</th>
+                  <th className="px-4 py-3 border border-border">Chutes</th>
+                  <th className="px-4 py-3 border border-border">Gols</th>
+                  <th className="px-4 py-3 border border-border text-green-400">Entradas (R$)</th>
+                  <th className="px-4 py-3 border border-border text-red-400">Saques (R$)</th>
+                  <th className="px-4 py-3 border border-border">Saldo (R$)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios.map((usuario) => (
+                  <tr
+                    key={usuario.id}
+                    className="text-center hover:bg-muted/30 text-sm transition-colors"
+                  >
+                    <td className="px-4 py-2 border border-border font-medium">
+                      <Link
+                        to={`/relatorio-usuario/${usuario.id}`}
+                        className="text-yellow-300 hover:underline"
+                      >
+                        {usuario.name}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-2 border border-border">{usuario.total_shots}</td>
+                    <td className="px-4 py-2 border border-border">{usuario.goals_scored}</td>
+                    <td className="px-4 py-2 border border-border text-green-400 font-semibold">
+                      R$ {usuario.total_credits}
+                    </td>
+                    <td className="px-4 py-2 border border-border text-red-400 font-semibold">
+                      R$ {usuario.total_debits}
+                    </td>
+                    <td className="px-4 py-2 border border-border font-bold">
+                      R$ {usuario.balance}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default RelatorioUsuarios;

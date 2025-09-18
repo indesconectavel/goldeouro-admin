@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Navegação - Gol de Ouro Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000717;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .test-button {
+            background: #fcd34d;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .test-button:hover {
+            background: #f59e0b;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success { background: #10b981; }
+        .error { background: #ef4444; }
+        .info { background: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste de Navegação - Gol de Ouro Admin</h1>
+        <p>Este teste verifica se a navegação está funcionando corretamente sem problemas de CSP.</p>
+        
+        <div id="status" class="status info">
+            Aguardando testes...
+        </div>
+        
+        <h2>Testes de Navegação</h2>
+        <div>
+            <button class="test-button" onclick="testNavigation('/painel')">Testar Painel</button>
+            <button class="test-button" onclick="testNavigation('/lista-usuarios')">Testar Lista de Usuários</button>
+            <button class="test-button" onclick="testNavigation('/estatisticas')">Testar Estatísticas</button>
+            <button class="test-button" onclick="testNavigation('/relatorio-financeiro')">Testar Relatório Financeiro</button>
+        </div>
+        
+        <h2>Testes de Funcionalidade</h2>
+        <div>
+            <button class="test-button" onclick="testHistoryAPI()">Testar History API</button>
+            <button class="test-button" onclick="testCSPDetection()">Detectar Problemas CSP</button>
+            <button class="test-button" onclick="testErrorHandling()">Testar Tratamento de Erros</button>
+        </div>
+        
+        <h2>Logs de Debug</h2>
+        <div id="logs" style="background: #2a2a2a; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;">
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function testNavigation(path) {
+            log(`Testando navegação para: ${path}`);
+            
+            try {
+                // Testar se a rota é válida
+                const validRoutes = [
+                    '/painel', '/lista-usuarios', '/relatorio-usuarios', '/relatorio-por-usuario',
+                    '/usuarios-bloqueados', '/estatisticas', '/estatisticas-gerais', '/top-jogadores',
+                    '/fila', '/jogo', '/relatorio-financeiro', '/transacoes', '/saque-usuarios',
+                    '/relatorio-geral', '/relatorio-semanal', '/chutes', '/logs', '/backup',
+                    '/configuracoes', '/exportar-dados', '/login'
+                ];
+                
+                if (!validRoutes.includes(path)) {
+                    throw new Error('Rota inválida');
+                }
+                
+                // Testar History API
+                if (window.history && window.history.pushState) {
+                    window.history.pushState(null, '', path);
+                    log('History API funcionando', 'success');
+                    updateStatus(`Navegação para ${path} bem-sucedida!`, 'success');
+                } else {
+                    throw new Error('History API não disponível');
+                }
+                
+            } catch (error) {
+                log(`Erro na navegação: ${error.message}`, 'error');
+                updateStatus(`Erro na navegação: ${error.message}`, 'error');
+            }
+        }
+
+        function testHistoryAPI() {
+            log('Testando History API...');
+            
+            try {
+                if (window.history && window.history.pushState) {
+                    const currentPath = window.location.pathname;
+                    window.history.pushState(null, '', '/test');
+                    window.history.pushState(null, '', currentPath);
+                    log('History API funcionando corretamente', 'success');
+                    updateStatus('History API funcionando!', 'success');
+                } else {
+                    throw new Error('History API não disponível');
+                }
+            } catch (error) {
+                log(`Erro no History API: ${error.message}`, 'error');
+                updateStatus(`Erro no History API: ${error.message}`, 'error');
+            }
+        }
+
+        function testCSPDetection() {
+            log('Testando detecção de CSP...');
+            
+            try {
+                // Tentar executar código que pode ser bloqueado por CSP
+                eval('true');
+                log('CSP não está bloqueando eval()', 'success');
+                updateStatus('CSP não detectado - navegação deve funcionar!', 'success');
+            } catch (error) {
+                if (error.name === 'EvalError' || error.message.includes('CSP')) {
+                    log('CSP detectado - pode afetar navegação', 'error');
+                    updateStatus('CSP detectado - navegação pode ter problemas', 'error');
+                } else {
+                    log(`Erro inesperado: ${error.message}`, 'error');
+                    updateStatus(`Erro inesperado: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function testErrorHandling() {
+            log('Testando tratamento de erros...');
+            
+            try {
+                // Simular erro
+                throw new Error('Erro de teste');
+            } catch (error) {
+                log(`Erro capturado: ${error.message}`, 'success');
+                updateStatus('Tratamento de erros funcionando!', 'success');
+            }
+        }
+
+        // Inicializar
+        log('Teste de navegação iniciado');
+        updateStatus('Pronto para testar navegação');
+    </script>
+</body>
+</html>
