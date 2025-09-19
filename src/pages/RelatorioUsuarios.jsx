@@ -30,8 +30,8 @@ const RelatorioUsuarios = () => {
   };
 
   return (
-    <div className="bg-background text-foreground min-h-screen p-6">
-      <div className="bg-card text-foreground p-8 rounded shadow-md max-w-7xl mx-auto mt-10">
+    <div className="min-h-screen p-6">
+      <div className="card p-8 max-w-7xl mx-auto mt-10">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-yellow-400">Relatório de Usuários</h1>
           <button
@@ -43,9 +43,9 @@ const RelatorioUsuarios = () => {
         </div>
 
         {loading ? (
-          <Loader />
+          <div className="text-center text-yellow-400 mt-10">Carregando dados...</div>
         ) : usuarios.length === 0 ? (
-          <p className="text-center text-muted-foreground mt-10">Ainda não possui dados...</p>
+          <p className="text-center text-gray-400 mt-10">Ainda não possui dados...</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto border border-border rounded-lg shadow-sm">

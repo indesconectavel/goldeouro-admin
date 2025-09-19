@@ -37,6 +37,14 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path="/painel"
+        element={
+          <MainLayout>
+            <Dashboard />
+          </MainLayout>
+        }
+      />
+      <Route
         path="/lista-usuarios"
         element={
           <MainLayout>

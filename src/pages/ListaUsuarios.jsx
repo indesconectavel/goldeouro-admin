@@ -25,7 +25,7 @@ const ListaUsuarios = () => {
 
   if (!usuarios.length) {
     return (
-      <div className="bg-[#000717] text-white min-h-screen p-8 rounded shadow-md max-w-5xl mx-auto mt-10 text-center">
+      <div className="card text-center">
         <h1 className="text-2xl font-bold text-yellow-400 mb-6">Lista de Usuários</h1>
         <p className="text-gray-400">Ainda não possui dados de usuários cadastrados...</p>
       </div>
@@ -33,7 +33,7 @@ const ListaUsuarios = () => {
   }
 
   return (
-    <div className="bg-[#000717] text-white min-h-screen p-8 rounded shadow-md max-w-7xl mx-auto mt-10">
+    <div className="card">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-yellow-400">Lista de Usuários</h1>
         <p className="text-sm text-gray-400">
@@ -41,34 +41,77 @@ const ListaUsuarios = () => {
         </p>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border border-[#2c3e50] rounded-lg shadow-sm">
-          <thead className="bg-[#111827] text-yellow-300 uppercase text-sm">
+      <div className="table-container">
+        <table className="data-table">
+          <thead>
             <tr>
-              <th className="px-4 py-3 border border-[#2c3e50]">Nome</th>
-              <th className="px-4 py-3 border border-[#2c3e50]">E-mail</th>
-              <th className="px-4 py-3 border border-[#2c3e50]">Status</th>
-              <th className="px-4 py-3 border border-[#2c3e50]">Criado em</th>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Saldo</th>
+              <th>Status</th>
+              <th>Criado em</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {usuarios.map((user) => (
-              <tr key={user.id} className="text-center hover:bg-[#1a2a3d] text-sm transition">
-                <td className="px-4 py-2 border border-[#2c3e50] font-medium">{user.name}</td>
-                <td className="px-4 py-2 border border-[#2c3e50]">{user.email}</td>
-                <td className="px-4 py-2 border border-[#2c3e50]">
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-bold ${
-                      user.account_status === 'blocked'
-                        ? 'bg-red-600 text-white'
-                        : 'bg-green-600 text-white'
-                    }`}
-                  >
+              <tr key={user.id}>
+                <td className="font-medium">{user.id}</td>
+                <td>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold mr-3">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    {user.name}
+                  </div>
+                </td>
+                <td>{user.email}</td>
+                <td>
+                  <span className="text-green-500 font-semibold">
+                    R$ {user.balance ? user.balance.toFixed(2) : '0.00'}
+                  </span>
+                </td>
+                <td>
+                  <span className={`status-badge ${
+                    user.account_status === 'blocked'
+                      ? 'status-inactive'
+                      : 'status-active'
+                  }`}>
                     {user.account_status === 'blocked' ? 'Bloqueado' : 'Ativo'}
                   </span>
                 </td>
-                <td className="px-4 py-2 border border-[#2c3e50]">
+                <td>
                   {new Date(user.created_at).toLocaleDateString('pt-BR')}
+                </td>
+                <td>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleViewUser(user)}
+                      className="action-btn text-blue-400"
+                      title="Ver detalhes"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleEditUser(user)}
+                      className="action-btn text-yellow-400"
+                      title="Editar usuário"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleToggleStatus(user)}
+                      className={`action-btn ${
+                        user.account_status === 'blocked'
+                          ? 'text-green-400'
+                          : 'text-red-400'
+                      }`}
+                      title={user.account_status === 'blocked' ? 'Ativar usuário' : 'Desativar usuário'}
+                    >
+                      {user.account_status === 'blocked' ? <UserCheck className="w-4 h-4" /> : <UserX className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

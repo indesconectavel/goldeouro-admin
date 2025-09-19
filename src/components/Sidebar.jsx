@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../config/env';
 import { safeNavigate, isRouteActive } from '../utils/navigation';
 import {
@@ -23,6 +23,7 @@ import {
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [expanded, setExpanded] = useState({
     painel: true, // Apenas Painel expandido por padrão
@@ -62,8 +63,8 @@ const Sidebar = () => {
         setIsOpen(false);
       }
       
-      // Usar função de navegação segura
-      safeNavigate(path);
+      // Usar React Router navigate
+      navigate(path);
     } catch (error) {
       console.error('Erro na navegação:', error);
     }
@@ -161,7 +162,6 @@ const Sidebar = () => {
                 <Link 
                   to="/painel" 
                   className={linkClasses('/painel')}
-                  onClick={() => handleNavigation('/painel')}
                 >
                   Painel de Controle
                 </Link>
@@ -186,28 +186,24 @@ const Sidebar = () => {
                 <Link 
                   to="/lista-usuarios" 
                   className={linkClasses('/lista-usuarios')}
-                  onClick={() => handleNavigation('/lista-usuarios')}
                 >
                   Lista de Usuários
                 </Link>
                 <Link 
                   to="/relatorio-usuarios" 
                   className={linkClasses('/relatorio-usuarios')}
-                  onClick={() => handleNavigation('/relatorio-usuarios')}
                 >
                   Relatório dos Usuários
                 </Link>
                 <Link 
                   to="/relatorio-por-usuario" 
                   className={linkClasses('/relatorio-por-usuario')}
-                  onClick={() => handleNavigation('/relatorio-por-usuario')}
                 >
                   Relatório Individual
                 </Link>
                 <Link 
                   to="/usuarios-bloqueados" 
                   className={linkClasses('/usuarios-bloqueados')}
-                  onClick={() => handleNavigation('/usuarios-bloqueados')}
                 >
                   Usuários Bloqueados
                 </Link>
@@ -232,35 +228,30 @@ const Sidebar = () => {
                 <Link 
                   to="/estatisticas" 
                   className={linkClasses('/estatisticas')}
-                  onClick={() => handleNavigation('/estatisticas')}
                 >
                   Estatísticas
                 </Link>
                 <Link 
                   to="/estatisticas-gerais" 
                   className={linkClasses('/estatisticas-gerais')}
-                  onClick={() => handleNavigation('/estatisticas-gerais')}
                 >
                   Estatísticas Gerais
                 </Link>
                 <Link 
                   to="/top-jogadores" 
                   className={linkClasses('/top-jogadores')}
-                  onClick={() => handleNavigation('/top-jogadores')}
                 >
                   Top Jogadores
                 </Link>
                 <Link 
                   to="/fila" 
                   className={linkClasses('/fila')}
-                  onClick={() => handleNavigation('/fila')}
                 >
                   Fila de Chute
                 </Link>
                 <Link 
                   to="/jogo" 
                   className={linkClasses('/jogo')}
-                  onClick={() => handleNavigation('/jogo')}
                 >
                   🎮 Jogar
                 </Link>
@@ -285,35 +276,30 @@ const Sidebar = () => {
                 <Link 
                   to="/relatorio-financeiro" 
                   className={linkClasses('/relatorio-financeiro')}
-                  onClick={() => handleNavigation('/relatorio-financeiro')}
                 >
                   Financeiro
                 </Link>
                 <Link 
                   to="/transacoes" 
                   className={linkClasses('/transacoes')}
-                  onClick={() => handleNavigation('/transacoes')}
                 >
                   Transações
                 </Link>
                 <Link 
                   to="/saque-usuarios" 
                   className={linkClasses('/saque-usuarios')}
-                  onClick={() => handleNavigation('/saque-usuarios')}
                 >
                   Saques
                 </Link>
                 <Link 
                   to="/relatorio-geral" 
                   className={linkClasses('/relatorio-geral')}
-                  onClick={() => handleNavigation('/relatorio-geral')}
                 >
                   Relatório Geral
                 </Link>
                 <Link 
                   to="/relatorio-semanal" 
                   className={linkClasses('/relatorio-semanal')}
-                  onClick={() => handleNavigation('/relatorio-semanal')}
                 >
                   Relatório Semanal
                 </Link>
@@ -338,35 +324,30 @@ const Sidebar = () => {
                 <Link 
                   to="/chutes" 
                   className={linkClasses('/chutes')}
-                  onClick={() => handleNavigation('/chutes')}
                 >
                   Chutes Recentes
                 </Link>
                 <Link 
                   to="/logs" 
                   className={linkClasses('/logs')}
-                  onClick={() => handleNavigation('/logs')}
                 >
                   Logs do Sistema
                 </Link>
                 <Link 
                   to="/backup" 
                   className={linkClasses('/backup')}
-                  onClick={() => handleNavigation('/backup')}
                 >
                   Backup
                 </Link>
                 <Link 
                   to="/configuracoes" 
                   className={linkClasses('/configuracoes')}
-                  onClick={() => handleNavigation('/configuracoes')}
                 >
                   Configurações
                 </Link>
                 <Link 
                   to="/exportar-dados" 
                   className={linkClasses('/exportar-dados')}
-                  onClick={() => handleNavigation('/exportar-dados')}
                 >
                   Exportar Dados
                 </Link>

@@ -10,9 +10,14 @@ export default function DashboardCards() {
     (async () => {
       try {
         const data = await getData('/api/public/dashboard');
-        if (alive) setState({ loading: false, error: null, data });
+        if (alive) {
+          setState({ loading: false, error: null, data });
+        }
       } catch (e) {
-        if (alive) setState({ loading: false, error: String(e), data: null });
+        console.warn('Erro ao buscar dados do dashboard, usando dados fictícios:', e);
+        if (alive) {
+          setState({ loading: false, error: String(e), data: null });
+        }
       }
     })();
     return () => { alive = false; };

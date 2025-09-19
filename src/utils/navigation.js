@@ -24,7 +24,7 @@ export const safeNavigate = (path) => {
     }
   }
 
-  // Estratégia 2: Navegação direta
+  // Estratégia 2: Navegação direta (apenas se necessário)
   try {
     window.location.href = path;
     return true;
