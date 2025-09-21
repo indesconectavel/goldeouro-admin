@@ -1,0 +1,32 @@
+{
+  "name": "goldeouro-admin-backup-scripts",
+  "version": "1.0.0",
+  "description": "Sistema de backup e restauração para o painel administrativo Gol de Ouro",
+  "main": "backup-system.js",
+  "scripts": {
+    "backup": "node backup-system.js create",
+    "backup:quick": "node backup-system.js create --quick",
+    "backup:list": "node backup-system.js list",
+    "restore": "node backup-system.js restore",
+    "backup:win": "powershell -ExecutionPolicy Bypass -File backup.ps1 create",
+    "backup:quick:win": "powershell -ExecutionPolicy Bypass -File backup.ps1 quick",
+    "backup:list:win": "powershell -ExecutionPolicy Bypass -File backup.ps1 list",
+    "restore:win": "powershell -ExecutionPolicy Bypass -File backup.ps1 restore",
+    "restore:quick:win": "powershell -ExecutionPolicy Bypass -File quick-restore.ps1",
+    "manager": "backup-manager.bat"
+  },
+  "keywords": [
+    "backup",
+    "restore",
+    "goldeouro",
+    "admin",
+    "automation"
+  ],
+  "author": "Gol de Ouro Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

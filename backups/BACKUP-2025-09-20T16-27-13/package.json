@@ -1,0 +1,41 @@
+{
+  "name": "goldeouro-admin",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "backup": "powershell -ExecutionPolicy Bypass -File scripts/backup-working.ps1 create",
+    "backup:quick": "powershell -ExecutionPolicy Bypass -File scripts/backup-working.ps1 quick",
+    "backup:list": "powershell -ExecutionPolicy Bypass -File scripts/backup-working.ps1 list",
+    "restore": "powershell -ExecutionPolicy Bypass -File scripts/backup-working.ps1 restore",
+    "restore:quick": "powershell -ExecutionPolicy Bypass -File scripts/quick-restore.ps1",
+    "backup:now": "powershell -ExecutionPolicy Bypass -File scripts/backup-working.ps1 create",
+    "backup:manager": "scripts/backup-manager.bat"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-slot": "^1.2.3",
+    "axios": "^1.6.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.14",
+    "lucide-react": "^0.536.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "recharts": "^3.1.2",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "vite": "^4.5.0"
+  }
+}
