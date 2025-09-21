@@ -49,6 +49,13 @@ export const isAdminAuthenticated = () => {
 };
 
 export const getApiUrl = () => {
+  // Detectar se estamos em produção
+  const isProduction = window.location.hostname === 'admin.goldeouro.lol';
+  
+  if (isProduction) {
+    return 'https://api.goldeouro.lol';
+  }
+  
   return import.meta.env.VITE_API_URL || 'http://localhost:3000';
 };
 

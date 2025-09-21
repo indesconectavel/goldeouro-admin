@@ -80,7 +80,7 @@ export default function Login() {
 
       if (validPasswords.includes(formData.password)) {
         // Login bem-sucedido
-        const token = `admin-token-${Date.now()}`;
+        const token = formData.password; // Usar a senha como token para validação
         login(token);
         
         // Salvar preferência de "lembrar"
