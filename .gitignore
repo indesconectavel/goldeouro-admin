@@ -23,3 +23,22 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Segredos / credenciais
+.env
+.env.*
+*.pem
+*.key
+id_rsa
+service-account.json
+
+# Dumps de banco
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.db
+
+# Artifacts locais
+artifacts/
+backups/
