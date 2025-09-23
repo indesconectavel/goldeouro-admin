@@ -1,0 +1,20 @@
+﻿{
+    "cloud_urls":  [
+                       "https://goldeourobackups.blob.core.windows.net/admin-backups/admin-local-20250922-230625/admin-local-20250922-2248.bundle",
+                       "https://goldeourobackups.blob.core.windows.net/admin-backups/admin-local-20250922-230625/admin-local-20250922-2249.bundle",
+                       "https://goldeourobackups.blob.core.windows.net/admin-backups/admin-local-20250922-230625/admin-local-20250922-2249.sql",
+                       "https://goldeourobackups.blob.core.windows.net/admin-backups/admin-local-20250922-230625/admin-local-20250922-2250.sql",
+                       "https://goldeourobackups.blob.core.windows.net/admin-backups/admin-local-20250922-230625/RELATORIO-BACKUP-LOCAL.md",
+                       "https://goldeourobackups.blob.core.windows.net/admin-backups/admin-local-20250922-230625/rollback-results.json"
+                   ],
+    "timestamp":  "2025-09-22T23:06:26.200Z",
+    "files_uploaded":  6,
+    "success":  true,
+    "storage_info":  {
+                         "account":  "goldeourobackups",
+                         "provider":  "Azure Blob Storage",
+                         "container":  "admin-backups",
+                         "prefix":  "admin-local-20250922-230625"
+                     },
+    "total_size":  5031424
+}

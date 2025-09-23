@@ -1,0 +1,44 @@
+﻿{
+    "total_size":  5031424,
+    "backup_type":  "admin_local",
+    "cloud_prefix":  "admin-local-20250922-230625",
+    "files":  [
+                  {
+                      "size_mb":  2.39,
+                      "name":  "admin-local-20250922-2248.bundle",
+                      "size":  2508318,
+                      "cloud_path":  "admin-local-20250922-230625/admin-local-20250922-2248.bundle"
+                  },
+                  {
+                      "size_mb":  2.39,
+                      "name":  "admin-local-20250922-2249.bundle",
+                      "size":  2508318,
+                      "cloud_path":  "admin-local-20250922-230625/admin-local-20250922-2249.bundle"
+                  },
+                  {
+                      "size_mb":  0,
+                      "name":  "admin-local-20250922-2249.sql",
+                      "size":  3638,
+                      "cloud_path":  "admin-local-20250922-230625/admin-local-20250922-2249.sql"
+                  },
+                  {
+                      "size_mb":  0,
+                      "name":  "admin-local-20250922-2250.sql",
+                      "size":  3638,
+                      "cloud_path":  "admin-local-20250922-230625/admin-local-20250922-2250.sql"
+                  },
+                  {
+                      "size_mb":  0.01,
+                      "name":  "RELATORIO-BACKUP-LOCAL.md",
+                      "size":  6546,
+                      "cloud_path":  "admin-local-20250922-230625/RELATORIO-BACKUP-LOCAL.md"
+                  },
+                  {
+                      "size_mb":  0,
+                      "name":  "rollback-results.json",
+                      "size":  966,
+                      "cloud_path":  "admin-local-20250922-230625/rollback-results.json"
+                  }
+              ],
+    "timestamp":  "2025-09-22T23:06:25.657Z"
+}

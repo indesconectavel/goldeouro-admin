@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-09-23T01:50:50.613Z",
+  "tag": "BACKUP-ADMIN-LOCAL-20250922-2248",
+  "dryRun": true,
+  "steps": [
+    {
+      "step": "tag_check",
+      "success": true,
+      "output": "[DRY-RUN] Comando não executado"
+    },
+    {
+      "step": "worktree_create",
+      "success": true,
+      "output": "[DRY-RUN] Comando não executado"
+    },
+    {
+      "step": "worktree_status",
+      "success": true,
+      "output": "[DRY-RUN] Comando não executado"
+    },
+    {
+      "step": "check_package.json",
+      "success": false
+    },
+    {
+      "step": "check_src/App.jsx",
+      "success": false
+    },
+    {
+      "step": "check_src/pages/Login.jsx",
+      "success": false
+    },
+    {
+      "step": "check_vercel.json",
+      "success": false
+    },
+    {
+      "step": "simulate_restore",
+      "success": true,
+      "output": "Simulação de restauração concluída"
+    }
+  ],
+  "success": true,
+  "message": "Rollback executado com sucesso"
+}
