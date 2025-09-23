@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-09-23T02:13:28.169Z",
+  "success": true,
+  "steps": [
+    {
+      "step": "git_status",
+      "success": true,
+      "output": "?? artifacts/admin-backup/\n?? scripts/backup-github.cjs\n?? scripts/rollback-admin-local.cjs\n?? scripts/upload-backup-azure.ps1\n?? scripts/upload-backup-cloud.cjs\n?? scripts/upload-backup-simple.ps1\n?? scripts/upload-real-azure.ps1\n"
+    },
+    {
+      "step": "git_add",
+      "success": true,
+      "output": ""
+    },
+    {
+      "step": "git_commit",
+      "success": true,
+      "output": "[painel-protegido-v1.1.0 ae9f94d] Backup Admin Local - 2025-09-23T02:13:31\n 15 files changed, 1622 insertions(+)\n create mode 100644 artifacts/admin-backup/RELATORIO-BACKUP-LOCAL.md\n create mode 100644 artifacts/admin-backup/RELATORIO-UPLOAD-NUVEM.md\n create mode 100644 artifacts/admin-backup/admin-local-20250922-2248.bundle\n create mode 100644 artifacts/admin-backup/admin-local-20250922-2249.bundle\n create mode 100644 artifacts/admin-backup/admin-local-20250922-2249.sql\n create mode 100644 artifacts/admin-backup/admin-local-20250922-2250.sql\n create mode 100644 artifacts/admin-backup/cloud-manifest.json\n create mode 100644 artifacts/admin-backup/cloud-upload-results.json\n create mode 100644 artifacts/admin-backup/rollback-results.json\n create mode 100644 scripts/backup-github.cjs\n create mode 100644 scripts/rollback-admin-local.cjs\n create mode 100644 scripts/upload-backup-azure.ps1\n create mode 100644 scripts/upload-backup-cloud.cjs\n create mode 100644 scripts/upload-backup-simple.ps1\n create mode 100644 scripts/upload-real-azure.ps1\n"
+    },
+    {
+      "step": "git_tag",
+      "success": true,
+      "output": ""
+    },
+    {
+      "step": "git_push_branches",
+      "success": true,
+      "output": ""
+    },
+    {
+      "step": "git_push_tags",
+      "success": true,
+      "output": ""
+    },
+    {
+      "step": "git_remote",
+      "success": true,
+      "output": "https://github.com/indesconectavel/goldeouro-admin.git\n"
+    },
+    {
+      "step": "github_release",
+      "success": false,
+      "error": "Command failed: gh release create \"BACKUP-ADMIN-GITHUB-2025-09-23T02-13-32\" --title \"Backup Admin Local - 2025-09-23\" --notes \"Backup completo do Painel Admin local com todos os arquivos e configurações.\"\n'gh' n�o � reconhecido como um comando interno\r\nou externo, um programa oper�vel ou um arquivo em lotes.\r\n"
+    }
+  ],
+  "repo_url": "https://github.com/indesconectavel/goldeouro-admin.git",
+  "tag_name": "BACKUP-ADMIN-GITHUB-2025-09-23T02-13-32",
+  "tag_url": "https://github.com/indesconectavel/goldeouro-admin.git/releases/tag/BACKUP-ADMIN-GITHUB-2025-09-23T02-13-32"
+}
