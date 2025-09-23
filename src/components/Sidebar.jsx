@@ -49,37 +49,22 @@ const Sidebar = () => {
         // Limpar estado local
         setIsOpen(false);
         
-        // Detectar se estamos em produção
-        const isProduction = window.location.hostname === 'admin.goldeouro.lol';
+        // Navegar para login usando React Router
+        navigate('/login', { replace: true });
         
-        if (isProduction) {
-          // Em produção, redirecionar para a página inicial que tem a lógica de autenticação
-          navigate('/', { replace: true });
-          
-          // Forçar reload da página para garantir limpeza completa
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 100);
-        } else {
-          // Em desenvolvimento, usar a rota de login
-          navigate('/login', { replace: true });
-          
-          // Forçar reload da página para garantir limpeza completa
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 100);
-        }
+        // Forçar reload da página para garantir limpeza completa
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 100);
       } else {
         console.error('Falha no logout');
         // Mesmo assim, tentar navegar
-        const isProduction = window.location.hostname === 'admin.goldeouro.lol';
-        window.location.href = isProduction ? '/' : '/login';
+        window.location.href = '/login';
       }
     } catch (error) {
       console.error('Erro durante logout:', error);
       // Em caso de erro, forçar navegação
-      const isProduction = window.location.hostname === 'admin.goldeouro.lol';
-      window.location.href = isProduction ? '/' : '/login';
+      window.location.href = '/login';
     }
   };
 

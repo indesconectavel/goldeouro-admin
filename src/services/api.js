@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { getApiUrl } from '../config/env';
 
 const api = axios.create({
-  baseURL: getApiUrl(),
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
   headers: {
     'x-admin-token': 'goldeouro123',
   },

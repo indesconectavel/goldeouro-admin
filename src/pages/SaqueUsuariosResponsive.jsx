@@ -94,9 +94,7 @@ const SaqueUsuariosMobileTablet = () => {
   }, []);
 
   const handleExport = () => {
-    // Detectar se estamos em produção
-    const isProduction = window.location.hostname === 'admin.goldeouro.lol';
-    const API_URL = isProduction ? 'https://api.goldeouro.lol' : (import.meta.env.VITE_API_URL || 'http://localhost:3000');
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     const url = API_URL + '/admin/exportar/saques-csv';
     window.open(url, "_blank");
   };

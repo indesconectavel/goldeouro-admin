@@ -188,3 +188,4 @@ npm run deploy:production
 **✅ Frontend:** **admin.goldeouro.lol**  
 **✅ Backend:** **api.goldeouro.lol**  
 **✅ Deploy:** **100% CONCLUÍDO**
+
