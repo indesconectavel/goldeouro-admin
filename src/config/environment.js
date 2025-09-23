@@ -11,7 +11,7 @@ const ENV = {
     SHOW_DEBUG_INFO: true
   },
   PRODUCTION: {
-    API_URL: 'https://api.goldeouro.lol',
+    API_URL: 'https://goldeouro-backend.onrender.com',
     USE_MOCK_DATA: false,
     ENABLE_DEBUG: false,
     LOG_LEVEL: 'error',
