@@ -1,17 +1,46 @@
 {
   "version": 2,
+  "domains": ["admin.goldeouro.lol"],
   "builds": [
     {
-      "src": "dist/**",
-      "use": "@vercel/static"
+      "src": "index.html",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/api/(.*)",
+      "dest": "https://goldeouro-backend-v2.fly.dev/api/$1"
+    },
+    {
+      "src": "/health",
+      "dest": "https://goldeouro-backend-v2.fly.dev/health"
+    },
+    {
+      "src": "/version",
+      "dest": "https://goldeouro-backend-v2.fly.dev/version"
+    },
+    {
+      "src": "/readiness",
+      "dest": "https://goldeouro-backend-v2.fly.dev/readiness"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
+  "env": {
+    "VITE_API_URL": "https://admin.goldeouro.lol",
+    "VITE_ADMIN_TOKEN": "admin-prod-token-2025",
+    "VITE_APP_ENV": "production"
+  },
   "headers": [
     {
       "source": "/(.*)",
@@ -35,6 +64,36 @@
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://admin.goldeouro.lol https://goldeouro-backend-v2.fly.dev; media-src 'self' data: blob:;"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, max-age=31536000"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|mp3|wav|ogg))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "public, max-age=31536000"
         }
       ]
     }
