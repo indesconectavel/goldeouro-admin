@@ -35,11 +35,11 @@ const LogsSistemaMobileTablet = () => {
   // Dados fictícios para fallback
   const mockLogs = [
     { id: 1, action: 'LOGIN', details: 'Administrador fez login no sistema', created_at: '2025-09-07T15:30:00Z' },
-    { id: 2, action: 'USER_BLOCK', details: 'Usuário João Silva foi bloqueado', created_at: '2025-09-07T15:25:00Z' },
+    { id: 2, action: 'USER_BLOCK', details: 'Usuário Usuário foi bloqueado', created_at: '2025-09-07T15:25:00Z' },
     { id: 3, action: 'WITHDRAWAL_APPROVE', details: 'Saque de R$ 150,00 aprovado', created_at: '2025-09-07T15:20:00Z' },
     { id: 4, action: 'GAME_CREATE', details: 'Novo jogo #128 criado', created_at: '2025-09-07T15:15:00Z' },
     { id: 5, action: 'CONFIG_UPDATE', details: 'Configurações do sistema atualizadas', created_at: '2025-09-07T15:10:00Z' },
-    { id: 6, action: 'USER_UNBLOCK', details: 'Usuário Maria Santos foi desbloqueado', created_at: '2025-09-07T15:05:00Z' },
+    { id: 6, action: 'USER_UNBLOCK', details: 'Usuário Usuário foi desbloqueado', created_at: '2025-09-07T15:05:00Z' },
     { id: 7, action: 'BACKUP_CREATE', details: 'Backup do sistema criado', created_at: '2025-09-07T15:00:00Z' },
     { id: 8, action: 'LOGIN_FAIL', details: 'Tentativa de login falhada - IP suspeito', created_at: '2025-09-07T14:55:00Z' }
   ];

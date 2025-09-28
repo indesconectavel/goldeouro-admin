@@ -34,32 +34,32 @@ const ExportarDadosMobileTablet = () => {
   // Dados fictícios para exportação
   const mockData = {
     usuarios: [
-      { id: 1, nome: 'João Silva', email: 'joao@email.com', saldo: 150.00, status: 'ativo', criado_em: '2025-09-01' },
-      { id: 2, nome: 'Maria Santos', email: 'maria@email.com', saldo: 75.50, status: 'ativo', criado_em: '2025-09-02' },
-      { id: 3, nome: 'Pedro Costa', email: 'pedro@email.com', saldo: 200.00, status: 'bloqueado', criado_em: '2025-09-03' },
-      { id: 4, nome: 'Ana Oliveira', email: 'ana@email.com', saldo: 50.00, status: 'ativo', criado_em: '2025-09-04' },
-      { id: 5, nome: 'Carlos Lima', email: 'carlos@email.com', saldo: 300.00, status: 'ativo', criado_em: '2025-09-05' }
+      { id: 1, nome: 'Usuário', email: 'joao@email.com', saldo: 150.00, status: 'ativo', criado_em: '2025-09-01' },
+      { id: 2, nome: 'Usuário', email: 'maria@email.com', saldo: 75.50, status: 'ativo', criado_em: '2025-09-02' },
+      { id: 3, nome: 'Usuário', email: 'pedro@email.com', saldo: 200.00, status: 'bloqueado', criado_em: '2025-09-03' },
+      { id: 4, nome: 'Usuário', email: 'ana@email.com', saldo: 50.00, status: 'ativo', criado_em: '2025-09-04' },
+      { id: 5, nome: 'Usuário', email: 'carlos@email.com', saldo: 300.00, status: 'ativo', criado_em: '2025-09-05' }
     ],
     chutes: [
-      { id: 1, usuario: 'João Silva', jogo_id: 123, resultado: 'gol', valor_aposta: 10.00, premio: 5.00, data: '2025-09-07 15:30:00' },
-      { id: 2, usuario: 'Maria Santos', jogo_id: 124, resultado: 'erro', valor_aposta: 25.00, premio: 0.00, data: '2025-09-07 15:35:00' },
-      { id: 3, usuario: 'Pedro Costa', jogo_id: 125, resultado: 'gol', valor_aposta: 15.00, premio: 7.50, data: '2025-09-07 15:40:00' },
-      { id: 4, usuario: 'Ana Oliveira', jogo_id: 126, resultado: 'gol_de_ouro', valor_aposta: 20.00, premio: 70.00, data: '2025-09-07 15:45:00' },
-      { id: 5, usuario: 'Carlos Lima', jogo_id: 127, resultado: 'erro', valor_aposta: 30.00, premio: 0.00, data: '2025-09-07 15:50:00' }
+      { id: 1, usuario: 'Usuário', jogo_id: 123, resultado: 'gol', valor_aposta: 10.00, premio: 5.00, data: '2025-09-07 15:30:00' },
+      { id: 2, usuario: 'Usuário', jogo_id: 124, resultado: 'erro', valor_aposta: 25.00, premio: 0.00, data: '2025-09-07 15:35:00' },
+      { id: 3, usuario: 'Usuário', jogo_id: 125, resultado: 'gol', valor_aposta: 15.00, premio: 7.50, data: '2025-09-07 15:40:00' },
+      { id: 4, usuario: 'Usuário', jogo_id: 126, resultado: 'gol_de_ouro', valor_aposta: 20.00, premio: 70.00, data: '2025-09-07 15:45:00' },
+      { id: 5, usuario: 'Usuário', jogo_id: 127, resultado: 'erro', valor_aposta: 30.00, premio: 0.00, data: '2025-09-07 15:50:00' }
     ],
     transacoes: [
-      { id: 1, usuario: 'João Silva', tipo: 'credito', valor: 50.00, descricao: 'Recarga via PIX', status: 'aprovado', data: '2025-09-07 14:00:00' },
-      { id: 2, usuario: 'Maria Santos', tipo: 'debito', valor: 25.00, descricao: 'Aposta em jogo #124', status: 'aprovado', data: '2025-09-07 14:05:00' },
-      { id: 3, usuario: 'Pedro Costa', tipo: 'credito', valor: 100.00, descricao: 'Ganho em jogo #125', status: 'aprovado', data: '2025-09-07 14:10:00' },
-      { id: 4, usuario: 'Ana Oliveira', tipo: 'credito', valor: 70.00, descricao: 'Gol de Ouro #126', status: 'aprovado', data: '2025-09-07 14:15:00' },
-      { id: 5, usuario: 'Carlos Lima', tipo: 'debito', valor: 30.00, descricao: 'Aposta em jogo #127', status: 'aprovado', data: '2025-09-07 14:20:00' }
+      { id: 1, usuario: 'Usuário', tipo: 'credito', valor: 50.00, descricao: 'Recarga via PIX', status: 'aprovado', data: '2025-09-07 14:00:00' },
+      { id: 2, usuario: 'Usuário', tipo: 'debito', valor: 25.00, descricao: 'Aposta em jogo #124', status: 'aprovado', data: '2025-09-07 14:05:00' },
+      { id: 3, usuario: 'Usuário', tipo: 'credito', valor: 100.00, descricao: 'Ganho em jogo #125', status: 'aprovado', data: '2025-09-07 14:10:00' },
+      { id: 4, usuario: 'Usuário', tipo: 'credito', valor: 70.00, descricao: 'Gol de Ouro #126', status: 'aprovado', data: '2025-09-07 14:15:00' },
+      { id: 5, usuario: 'Usuário', tipo: 'debito', valor: 30.00, descricao: 'Aposta em jogo #127', status: 'aprovado', data: '2025-09-07 14:20:00' }
     ],
     saques: [
-      { id: 1, usuario: 'João Silva', valor: 150.00, status: 'aprovado', data_solicitacao: '2025-09-06 10:00:00', data_processamento: '2025-09-06 12:00:00' },
-      { id: 2, usuario: 'Maria Santos', valor: 75.50, status: 'pendente', data_solicitacao: '2025-09-07 09:00:00', data_processamento: null },
-      { id: 3, usuario: 'Pedro Costa', valor: 200.00, status: 'rejeitado', data_solicitacao: '2025-09-05 15:00:00', data_processamento: '2025-09-05 16:00:00' },
-      { id: 4, usuario: 'Ana Oliveira', valor: 50.00, status: 'aprovado', data_solicitacao: '2025-09-04 11:00:00', data_processamento: '2025-09-04 13:00:00' },
-      { id: 5, usuario: 'Carlos Lima', valor: 300.00, status: 'pendente', data_solicitacao: '2025-09-07 16:00:00', data_processamento: null }
+      { id: 1, usuario: 'Usuário', valor: 150.00, status: 'aprovado', data_solicitacao: '2025-09-06 10:00:00', data_processamento: '2025-09-06 12:00:00' },
+      { id: 2, usuario: 'Usuário', valor: 75.50, status: 'pendente', data_solicitacao: '2025-09-07 09:00:00', data_processamento: null },
+      { id: 3, usuario: 'Usuário', valor: 200.00, status: 'rejeitado', data_solicitacao: '2025-09-05 15:00:00', data_processamento: '2025-09-05 16:00:00' },
+      { id: 4, usuario: 'Usuário', valor: 50.00, status: 'aprovado', data_solicitacao: '2025-09-04 11:00:00', data_processamento: '2025-09-04 13:00:00' },
+      { id: 5, usuario: 'Usuário', valor: 300.00, status: 'pendente', data_solicitacao: '2025-09-07 16:00:00', data_processamento: null }
     ]
   };
 

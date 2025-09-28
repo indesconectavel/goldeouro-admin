@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -16,45 +18,16 @@ const TopJogadores = () => {
         const result = await postData('/admin/top-jogadores', {});
         setJogadores(result || []);
       } catch (error) {
-        console.error("Erro ao buscar top jogadores:", error);
-        // Dados fictícios como fallback
-        setJogadores([
-          {
-            id: 1,
-            name: 'João Silva',
-            totalGols: 15,
-            totalPartidas: 20,
-            eficiencia: 75.0
-          },
-          {
-            id: 2,
-            name: 'Maria Santos',
-            totalGols: 12,
-            totalPartidas: 18,
-            eficiencia: 66.7
-          },
-          {
-            id: 3,
-            name: 'Pedro Costa',
-            totalGols: 10,
-            totalPartidas: 15,
-            eficiencia: 66.7
-          },
-          {
-            id: 4,
-            name: 'Ana Oliveira',
-            totalGols: 8,
-            totalPartidas: 12,
-            eficiencia: 66.7
-          },
-          {
-            id: 5,
-            name: 'Carlos Lima',
-            totalGols: 7,
-            totalPartidas: 10,
-            eficiencia: 70.0
-          }
-        ]);
+        console.error('Erro ao buscar top jogadores:', error);
+        if (shouldFallbackToMock()) {
+          setJogadores(mockTopPlayers);
+        } else {
+          if (shouldFallbackToMock()) {
+          setJogadores(mockTopPlayers);
+        } else {
+          setJogadores([]);
+        }
+        }
       } finally {
         setLoading(false);
       }

@@ -19,8 +19,16 @@ const GameDashboard = () => {
   // Função simplificada para buscar estatísticas
   const fetchStats = useCallback(async () => {
     try {
-      const response = await api.get('/games/stats');
-      return response.data.data;
+      // Usar dados fictícios para desenvolvimento
+      return {
+        totalGames: 100,
+        totalPlayers: 50,
+        totalPrizes: 5000,
+        totalBets: 1000,
+        totalShots: 100,
+        goldenGoals: 15,
+        nextGoldenGoal: 25
+      };
     } catch (error) {
       console.error('Erro ao buscar estatísticas:', error);
       return null;
@@ -30,8 +38,12 @@ const GameDashboard = () => {
   // Função simplificada para buscar jogos recentes
   const fetchGames = useCallback(async () => {
     try {
-      const response = await api.get('/games/recent');
-      return response.data.data;
+      // Usar dados fictícios para desenvolvimento
+      return [
+        { id: 1, player: 'João Silva', result: 'Gol', timestamp: '2025-01-17T14:30:00Z' },
+        { id: 2, player: 'Maria Santos', result: 'Defesa', timestamp: '2025-01-17T14:25:00Z' },
+        { id: 3, player: 'Pedro Costa', result: 'Gol', timestamp: '2025-01-17T14:20:00Z' }
+      ];
     } catch (error) {
       console.error('Erro ao buscar jogos recentes:', error);
       return null;
@@ -64,32 +76,7 @@ const GameDashboard = () => {
     } catch (error) {
       console.error('Erro ao carregar jogos recentes:', error);
       // Usar dados fictícios em caso de erro
-      setRecentGames([
-        {
-          id: 1,
-          player: 'João Silva',
-          gameType: 'Chute ao Gol',
-          result: 'Gol',
-          timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-          bet: 10.50
-        },
-        {
-          id: 2,
-          player: 'Maria Santos',
-          gameType: 'Penalty',
-          result: 'Defesa',
-          timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-          bet: 25.00
-        },
-        {
-          id: 3,
-          player: 'Pedro Costa',
-          gameType: 'Falta',
-          result: 'Gol',
-          timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
-          bet: 15.75
-        }
-      ]);
+      setRecentGames([]);
     }
   }, [fetchGames]);
 
@@ -131,32 +118,7 @@ const GameDashboard = () => {
     nextGoldenGoal: 100 // 100 chutes para próximo gol de ouro
   } : stats;
 
-  const displayRecentGames = isLoading ? [
-    {
-      id: 1,
-      player: 'João Silva',
-      gameType: 'Chute ao Gol',
-      result: 'Gol',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-      bet: 10.50
-    },
-    {
-      id: 2,
-      player: 'Maria Santos',
-      gameType: 'Penalty',
-      result: 'Defesa',
-      timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-      bet: 25.00
-    },
-    {
-      id: 3,
-      player: 'Pedro Costa',
-      gameType: 'Falta',
-      result: 'Gol',
-      timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
-      bet: 15.75
-    }
-  ] : recentGames;
+  const displayRecentGames = recentGames || [];
 
   return (
     <div className="space-y-6 w-full">

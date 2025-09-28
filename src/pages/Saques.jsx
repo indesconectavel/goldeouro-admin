@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -28,7 +30,7 @@ const Saques = () => {
       setSaques([
         {
           id: '1',
-          usuario: 'João Silva',
+          usuario: 'Usuário',
           email: 'joao@email.com',
           valor: 150.00,
           pix_key: '12345678901',
@@ -40,7 +42,7 @@ const Saques = () => {
         },
         {
           id: '2',
-          usuario: 'Maria Santos',
+          usuario: 'Usuário',
           email: 'maria@email.com',
           valor: 75.50,
           pix_key: 'maria@email.com',
@@ -52,7 +54,7 @@ const Saques = () => {
         },
         {
           id: '3',
-          usuario: 'Pedro Costa',
+          usuario: 'Usuário',
           email: 'pedro@email.com',
           valor: 200.00,
           pix_key: '11987654321',

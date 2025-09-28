@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -17,55 +19,12 @@ const RelatorioUsuarios = () => {
         const result = await postData('/admin/relatorio-usuarios', {});
         setUsuarios(result || []);
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        // Dados fictícios como fallback
-        setUsuarios([
-          {
-            id: 1,
-            name: 'João Silva',
-            totalChutes: 25,
-            totalGols: 18,
-            totalCreditos: 500.00,
-            totalDebitos: 150.00,
-            saldo: 350.00
-          },
-          {
-            id: 2,
-            name: 'Maria Santos',
-            totalChutes: 20,
-            totalGols: 12,
-            totalCreditos: 300.00,
-            totalDebitos: 100.00,
-            saldo: 200.00
-          },
-          {
-            id: 3,
-            name: 'Pedro Costa',
-            totalChutes: 15,
-            totalGols: 8,
-            totalCreditos: 200.00,
-            totalDebitos: 50.00,
-            saldo: 150.00
-          },
-          {
-            id: 4,
-            name: 'Ana Oliveira',
-            totalChutes: 30,
-            totalGols: 22,
-            totalCreditos: 800.00,
-            totalDebitos: 200.00,
-            saldo: 600.00
-          },
-          {
-            id: 5,
-            name: 'Carlos Lima',
-            totalChutes: 12,
-            totalGols: 6,
-            totalCreditos: 150.00,
-            totalDebitos: 75.00,
-            saldo: 75.00
-          }
-        ]);
+        console.error('Erro ao buscar relatório de usuários:', error);
+        if (shouldFallbackToMock()) {
+          setUsuarios(mockUsers);
+        } else {
+          setUsuarios([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -124,7 +83,7 @@ const RelatorioUsuarios = () => {
       header: 'Saques (R$)',
       render: (usuario) => (
         <span className="text-red-400 font-semibold">
-          R$ {usuario.totalDebitos.toFixed(2)}
+          R$ {(usuario.totalDebitos || 0).toFixed(2)}
         </span>
       )
     },
@@ -133,7 +92,7 @@ const RelatorioUsuarios = () => {
       header: 'Saldo (R$)',
       render: (usuario) => (
         <span className="text-white font-bold">
-          R$ {usuario.saldo.toFixed(2)}
+          R$ {(usuario.saldo || 0).toFixed(2)}
         </span>
       )
     }

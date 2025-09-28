@@ -95,7 +95,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Estilos CSS para mobile */}
-      <style jsx>{`
+      <style jsx="true">{`
         @media (max-width: 768px) {
           .sidebar {
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);

@@ -38,11 +38,11 @@ const TopJogadoresMobileTablet = () => {
 
   // Dados fictícios para fallback
   const dadosFicticios = [
-    { id: 1, name: 'João Silva', games: 25, wins: 18, goals: 15, efficiency: 72.0 },
-    { id: 2, name: 'Maria Santos', games: 22, wins: 16, goals: 12, efficiency: 72.7 },
-    { id: 3, name: 'Pedro Costa', games: 20, wins: 14, goals: 10, efficiency: 70.0 },
-    { id: 4, name: 'Ana Oliveira', games: 18, wins: 12, goals: 8, efficiency: 66.7 },
-    { id: 5, name: 'Carlos Lima', games: 15, wins: 10, goals: 7, efficiency: 66.7 }
+    {},
+    {},
+    {},
+    {},
+    {}
   ];
 
   useEffect(() => {

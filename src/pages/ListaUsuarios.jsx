@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers } from '../data/mockData';
 import { Eye, Edit, UserCheck, UserX } from 'lucide-react';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
@@ -19,49 +21,12 @@ const ListaUsuarios = () => {
         setUsuarios(result || []);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
-        // Dados fictícios como fallback
-        setUsuarios([
-          {
-            id: 1,
-            name: 'João Silva',
-            email: 'joao@email.com',
-            balance: 150.50,
-            account_status: 'active',
-            created_at: '2025-01-15T10:30:00Z'
-          },
-          {
-            id: 2,
-            name: 'Maria Santos',
-            email: 'maria@email.com',
-            balance: 75.25,
-            account_status: 'active',
-            created_at: '2025-01-14T15:45:00Z'
-          },
-          {
-            id: 3,
-            name: 'Pedro Costa',
-            email: 'pedro@email.com',
-            balance: 0.00,
-            account_status: 'blocked',
-            created_at: '2025-01-13T09:20:00Z'
-          },
-          {
-            id: 4,
-            name: 'Ana Oliveira',
-            email: 'ana@email.com',
-            balance: 200.75,
-            account_status: 'active',
-            created_at: '2025-01-12T14:15:00Z'
-          },
-          {
-            id: 5,
-            name: 'Carlos Lima',
-            email: 'carlos@email.com',
-            balance: 50.00,
-            account_status: 'blocked',
-            created_at: '2025-01-11T11:30:00Z'
-          }
-        ]);
+        // Usar dados fictícios em desenvolvimento, array vazio em produção
+        if (shouldFallbackToMock()) {
+          setUsuarios(mockUsers);
+        } else {
+          setUsuarios([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -69,6 +34,14 @@ const ListaUsuarios = () => {
 
     fetchUsuarios();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+      </div>
+    );
+  }
 
   const handleViewUser = (user) => {
     alert(`Visualizando usuário: ${user.name}`);

@@ -61,11 +61,11 @@ const MetricasJogos = () => {
           { hour: '23:00', games: 120 }
         ],
         top_players: [
-          { user_id: 1, name: 'João Silva', games: 45, wins: 32, accuracy: 71.1 },
-          { user_id: 2, name: 'Maria Santos', games: 38, wins: 28, accuracy: 73.7 },
-          { user_id: 3, name: 'Pedro Costa', games: 42, wins: 29, accuracy: 69.0 },
-          { user_id: 4, name: 'Ana Oliveira', games: 35, wins: 26, accuracy: 74.3 },
-          { user_id: 5, name: 'Carlos Lima', games: 40, wins: 27, accuracy: 67.5 }
+          {},
+          {},
+          {},
+          {},
+          {}
         ]
       };
 

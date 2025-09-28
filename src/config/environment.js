@@ -11,7 +11,7 @@ const ENV = {
     SHOW_DEBUG_INFO: true
   },
   PRODUCTION: {
-    API_URL: 'https://goldeouro-backend.onrender.com',
+    API_URL: 'https://goldeouro-backend-v2.fly.dev',
     USE_MOCK_DATA: false,
     ENABLE_DEBUG: false,
     LOG_LEVEL: 'error',

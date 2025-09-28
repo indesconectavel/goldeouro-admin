@@ -24,11 +24,11 @@ const Estatisticas = () => {
           jogosHoje: 23,
           receitaHoje: "R$ 2.340,80",
           topJogadores: [
-            { nome: "João Silva", chutes: 89, gols: 12, saldo: "R$ 1.250,00" },
-            { nome: "Maria Santos", chutes: 76, gols: 8, saldo: "R$ 980,50" },
-            { nome: "Pedro Costa", chutes: 65, gols: 15, saldo: "R$ 1.450,00" },
-            { nome: "Ana Oliveira", chutes: 54, gols: 6, saldo: "R$ 750,00" },
-            { nome: "Carlos Lima", chutes: 43, gols: 9, saldo: "R$ 1.120,00" }
+            { nome: "Usuário", chutes: 89, gols: 12, saldo: "R$ 1.250,00" },
+            { nome: "Usuário", chutes: 76, gols: 8, saldo: "R$ 980,50" },
+            { nome: "Usuário", chutes: 65, gols: 15, saldo: "R$ 1.450,00" },
+            { nome: "Usuário", chutes: 54, gols: 6, saldo: "R$ 750,00" },
+            { nome: "Usuário", chutes: 43, gols: 9, saldo: "R$ 1.120,00" }
           ]
         });
       } finally {

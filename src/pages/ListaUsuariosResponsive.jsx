@@ -41,37 +41,9 @@ const ListaUsuariosResponsive = () => {
 
         const data = await response.json();
         setUsuarios(data);
-      } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        // Dados de fallback para demonstração
-        const mockUsuarios = [
-          {
-            id: 1,
-            name: 'João Silva',
-            email: 'joao@email.com',
-            account_status: 'active',
-            balance: 150.00,
-            created_at: '2025-01-07T10:00:00Z',
-            ultimo_acesso: '2025-01-07T15:30:00Z'
-          },
-          {
-            id: 2,
-            name: 'Maria Santos',
-            email: 'maria@email.com',
-            account_status: 'blocked',
-            balance: 75.50,
-            created_at: '2025-01-06T14:20:00Z',
-            ultimo_acesso: '2025-01-06T16:45:00Z'
-          },
-          {
-            id: 3,
-            name: 'Pedro Costa',
-            email: 'pedro@email.com',
-            account_status: 'active',
-            balance: 200.00,
-            created_at: '2025-01-05T09:15:00Z',
-            ultimo_acesso: '2025-01-07T12:30:00Z'
-          }
+      } catch (error) {},
+          {},
+          {}
         ];
         setUsuarios(mockUsuarios);
       } finally {

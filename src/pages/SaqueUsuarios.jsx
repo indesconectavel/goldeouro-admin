@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -19,21 +21,21 @@ const SaqueUsuarios = () => {
         setSaques([
           {
             id: 1,
-            user_id: 'João Silva',
+            user_id: 'Usuário',
             amount: 150.00,
             status: 'aprovado',
             created_at: '2025-01-17T14:00:00Z'
           },
           {
             id: 2,
-            user_id: 'Maria Santos',
+            user_id: 'Usuário',
             amount: 75.50,
             status: 'pendente',
             created_at: '2025-01-17T13:30:00Z'
           },
           {
             id: 3,
-            user_id: 'Pedro Costa',
+            user_id: 'Usuário',
             amount: 200.00,
             status: 'rejeitado',
             created_at: '2025-01-17T13:00:00Z'

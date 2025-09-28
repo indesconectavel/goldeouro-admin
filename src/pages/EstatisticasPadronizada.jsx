@@ -26,10 +26,10 @@ const EstatisticasPadronizada = () => {
       { title: 'Lucro Líquido', value: 'R$ 8.901', icon: '💎' }
     ],
     tableData: [
-      { id: 1, name: 'João Silva', status: 'active', value: 1250.50, games: 25 },
-      { id: 2, name: 'Maria Santos', status: 'waiting', value: 890.75, games: 18 },
-      { id: 3, name: 'Pedro Costa', status: 'finished', value: 2100.00, games: 32 },
-      { id: 4, name: 'Ana Oliveira', status: 'active', value: 1567.25, games: 28 }
+      {},
+      {},
+      {},
+      {}
     ]
   };
 

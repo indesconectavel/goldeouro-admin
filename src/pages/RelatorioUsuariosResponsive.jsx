@@ -26,7 +26,7 @@ const RelatorioUsuariosResponsive = () => {
         const mockUsuarios = [
           {
             id: 1,
-            nome: 'João Silva',
+            nome: 'Usuário',
             email: 'joao@email.com',
             status: 'ativo',
             saldo: 150.00,
@@ -41,7 +41,7 @@ const RelatorioUsuariosResponsive = () => {
           },
           {
             id: 2,
-            nome: 'Maria Santos',
+            nome: 'Usuário',
             email: 'maria@email.com',
             status: 'ativo',
             saldo: 75.50,
@@ -56,7 +56,7 @@ const RelatorioUsuariosResponsive = () => {
           },
           {
             id: 3,
-            nome: 'Pedro Costa',
+            nome: 'Usuário',
             email: 'pedro@email.com',
             status: 'ativo',
             saldo: 200.00,

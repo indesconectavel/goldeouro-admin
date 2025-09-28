@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -17,36 +19,15 @@ const UsuariosBloqueados = () => {
       setUsuarios(result || []);
     } catch (error) {
       console.error('Erro ao buscar usuários bloqueados:', error);
-      // Dados fictícios como fallback
-      setUsuarios([
-        {
-          id: 1,
-          name: 'Pedro Costa',
-          email: 'pedro@email.com',
-          account_status: 'blocked',
-          created_at: '2025-01-13T09:20:00Z',
-          blocked_at: '2025-01-16T14:30:00Z',
-          reason: 'Violação dos termos de uso'
-        },
-        {
-          id: 2,
-          name: 'Carlos Lima',
-          email: 'carlos@email.com',
-          account_status: 'blocked',
-          created_at: '2025-01-11T11:30:00Z',
-          blocked_at: '2025-01-15T10:15:00Z',
-          reason: 'Comportamento inadequado'
-        },
-        {
-          id: 3,
-          name: 'Ana Silva',
-          email: 'ana.silva@email.com',
-          account_status: 'blocked',
-          created_at: '2025-01-10T16:45:00Z',
-          blocked_at: '2025-01-14T09:30:00Z',
-          reason: 'Tentativa de fraude'
+      if (shouldFallbackToMock()) {
+          setUsuarios(mockUsers);
+        } else {
+          if (shouldFallbackToMock()) {
+          setUsuarios(mockUsers);
+        } else {
+          setUsuarios([]);
         }
-      ]);
+        }
     } finally {
       setLoading(false);
     }

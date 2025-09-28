@@ -1,33 +1,36 @@
 ﻿import { useEffect, useState } from 'react';
 import { getData } from '../js/api';
 import LoadingSpinner from './LoadingSpinner';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockDashboardData } from '../data/mockData';
 
 export default function DashboardCards() {
   const [state, setState] = useState({ loading: true, error: null, data: null });
 
-  // Dados fictícios (congruentes com 100 chutes)
-  const fallbackData = {
-    users: 50,
-    games: { 
-      total: 100, 
-      waiting: 8, 
-      active: 12, 
-      finished: 80,
-      today: 15,
-      thisWeek: 45,
-      thisMonth: 100
-    },
-    bets: 1000, // R$ 10,00 por jogo x 100 jogos
-    queue: 5,
-    revenue: 500, // R$ 5,00 por jogo x 100 jogos
-    profit: 250, // R$ 2,50 por jogo x 100 jogos
-    averageBet: 10.00,
-    successRate: 75.5,
-    topPlayers: [
-      { name: 'João Silva', games: 25, wins: 18 },
-      { name: 'Maria Santos', games: 22, wins: 16 },
-      { name: 'Pedro Costa', games: 20, wins: 14 }
-    ]
+  // Dados padrão baseados no ambiente
+  const getDefaultData = () => {
+    if (shouldUseMockData()) {
+      return mockDashboardData;
+    }
+    return {
+      users: 0,
+      games: { 
+        total: 0, 
+        waiting: 0, 
+        active: 0, 
+        finished: 0,
+        today: 0,
+        thisWeek: 0,
+        thisMonth: 0
+      },
+      bets: 0,
+      queue: 0,
+      revenue: 0,
+      profit: 0,
+      averageBet: 0,
+      successRate: 0,
+      topPlayers: []
+    };
   };
 
   useEffect(() => {
@@ -39,10 +42,10 @@ export default function DashboardCards() {
           setState({ loading: false, error: null, data });
         }
       } catch (e) {
-        console.warn('Erro ao buscar dados do dashboard, usando dados fictícios:', e);
+        console.error('Erro ao buscar dados do dashboard:', e);
         if (alive) {
-          // Usar dados fictícios imediatamente em caso de erro
-          setState({ loading: false, error: String(e), data: fallbackData });
+          // Usar dados padrão baseados no ambiente em caso de erro
+          setState({ loading: false, error: String(e), data: getDefaultData() });
         }
       }
     })();
@@ -55,7 +58,7 @@ export default function DashboardCards() {
     </div>
   );
 
-  const displayData = state.error ? fallbackData : state.data;
+  const displayData = state.error ? getDefaultData() : state.data;
 
   const { users, games, bets, queue } = displayData || {};
   

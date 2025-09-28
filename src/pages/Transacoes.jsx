@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -19,7 +21,7 @@ const Transacoes = () => {
         setTransacoes([
           {
             id: 1,
-            user_id: 'João Silva',
+            user_id: 'Usuário',
             type: 'credit',
             amount: 100.00,
             description: 'Depósito via PIX',
@@ -27,7 +29,7 @@ const Transacoes = () => {
           },
           {
             id: 2,
-            user_id: 'Maria Santos',
+            user_id: 'Usuário',
             type: 'debit',
             amount: 50.00,
             description: 'Aposta em jogo',
@@ -35,7 +37,7 @@ const Transacoes = () => {
           },
           {
             id: 3,
-            user_id: 'Pedro Costa',
+            user_id: 'Usuário',
             type: 'credit',
             amount: 200.00,
             description: 'Ganho em jogo',

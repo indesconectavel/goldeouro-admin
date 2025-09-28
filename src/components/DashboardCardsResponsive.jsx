@@ -48,32 +48,28 @@ const DashboardCardsMobileTablet = () => {
     </div>
   );
   
-  // Se houver erro, usar dados fictícios
-  const fallbackData = {
-    users: 50,
+  // Se houver erro, usar dados padrão
+  const defaultData = {
+    users: 0,
     games: { 
-      total: 100, 
-      waiting: 8, 
-      active: 12, 
-      finished: 80,
-      today: 15,
-      thisWeek: 45,
-      thisMonth: 100
+      total: 0, 
+      waiting: 0, 
+      active: 0, 
+      finished: 0,
+      today: 0,
+      thisWeek: 0,
+      thisMonth: 0
     },
-    bets: 1000,
-    queue: 5,
-    revenue: 500,
-    profit: 250,
-    averageBet: 10.00,
-    successRate: 75.5,
-    topPlayers: [
-      { name: 'João Silva', games: 25, wins: 18 },
-      { name: 'Maria Santos', games: 22, wins: 16 },
-      { name: 'Pedro Costa', games: 20, wins: 14 }
-    ]
+    bets: 0,
+    queue: 0,
+    revenue: 0,
+    profit: 0,
+    averageBet: 0,
+    successRate: 0,
+    topPlayers: []
   };
 
-  const displayData = state.error ? fallbackData : state.data;
+  const displayData = state.error ? defaultData : state.data;
   const { users, games, bets, queue } = displayData || {};
   
   // Configurações responsivas

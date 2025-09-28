@@ -48,50 +48,9 @@ const TopJogadoresMobileTabletPadronizada = () => {
       const response = await api.post('/admin/top-jogadores', {});
       setJogadores(response.data || []);
     } catch (error) {
-      console.error('Erro ao buscar jogadores:', error);
-      // Dados de fallback para demonstração
-      setJogadores([
-        {
-          id: 1,
-          name: 'João Silva',
-          games: 25,
-          wins: 18,
-          goals: 45,
-          efficiency: 72
-        },
-        {
-          id: 2,
-          name: 'Maria Santos',
-          games: 22,
-          wins: 16,
-          goals: 38,
-          efficiency: 73
-        },
-        {
-          id: 3,
-          name: 'Pedro Costa',
-          games: 20,
-          wins: 14,
-          goals: 32,
-          efficiency: 70
-        },
-        {
-          id: 4,
-          name: 'Ana Oliveira',
-          games: 18,
-          wins: 12,
-          goals: 28,
-          efficiency: 67
-        },
-        {
-          id: 5,
-          name: 'Carlos Lima',
-          games: 16,
-          wins: 10,
-          goals: 24,
-          efficiency: 63
-        }
-      ]);
+        console.error('Erro na requisição:', error);
+        // Usar dados padrão em caso de erro
+      }
     } finally {
       setLoading(false);
     }

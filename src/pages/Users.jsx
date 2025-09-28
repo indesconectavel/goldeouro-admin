@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -15,37 +17,9 @@ const Users = () => {
         const result = await postData('/admin/usuarios', {});
         setUsers(result || []);
       } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        // Dados fictícios como fallback
-        setUsers([
-          {
-            id: 1,
-            name: 'Fred S. Silva',
-            email: 'free10signer@gmail.com',
-            status: 'active',
-            balance: 0,
-            createdAt: '2025-01-17',
-            lastLogin: '2025-01-17'
-          },
-          {
-            id: 2,
-            name: 'Admin',
-            email: 'admin@goldeouro.lol',
-            status: 'active',
-            balance: 1000,
-            createdAt: '2025-01-17',
-            lastLogin: '2025-01-17'
-          },
-          {
-            id: 3,
-            name: 'Maria Santos',
-            email: 'maria@email.com',
-            status: 'blocked',
-            balance: 250.50,
-            createdAt: '2025-01-16',
-            lastLogin: '2025-01-16'
-          }
-        ]);
+        console.error('Erro na requisição:', error);
+        // Usar dados padrão em caso de erro
+      }
       } finally {
         setLoading(false);
       }

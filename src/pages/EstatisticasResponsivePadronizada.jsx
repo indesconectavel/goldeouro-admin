@@ -44,11 +44,11 @@ const EstatisticasMobileTabletPadronizada = () => {
     jogosEstaSemana: 45,
     jogosEsteMes: 100,
     topJogadores: [
-      { nome: 'João Silva', jogos: 25, vitorias: 18, taxaVitoria: 72.0 },
-      { nome: 'Maria Santos', jogos: 22, vitorias: 16, taxaVitoria: 72.7 },
-      { nome: 'Pedro Costa', jogos: 20, vitorias: 14, taxaVitoria: 70.0 },
-      { nome: 'Ana Oliveira', jogos: 18, vitorias: 12, taxaVitoria: 66.7 },
-      { nome: 'Carlos Lima', jogos: 16, vitorias: 10, taxaVitoria: 62.5 }
+      { nome: 'Usuário', jogos: 25, vitorias: 18, taxaVitoria: 72.0 },
+      { nome: 'Usuário', jogos: 22, vitorias: 16, taxaVitoria: 72.7 },
+      { nome: 'Usuário', jogos: 20, vitorias: 14, taxaVitoria: 70.0 },
+      { nome: 'Usuário', jogos: 18, vitorias: 12, taxaVitoria: 66.7 },
+      { nome: 'Usuário', jogos: 16, vitorias: 10, taxaVitoria: 62.5 }
     ]
   };
 

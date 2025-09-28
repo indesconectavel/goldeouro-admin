@@ -25,6 +25,7 @@ import Configuracoes from "./pages/Configuracoes";
 import ExportarDados from "./pages/ExportarDados";
 import Logs from "./pages/LogsSistema";
 import Chutes from "./pages/ChutesRecentes";
+import Logout from "./components/Logout";
 
 export default function AppRoutes() {
   return (
@@ -32,6 +33,10 @@ export default function AppRoutes() {
       <Route
         path="/login"
         element={<Login />}
+      />
+      <Route
+        path="/logout"
+        element={<Logout />}
       />
       <Route
         path="/"

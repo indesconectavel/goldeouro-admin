@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App-no-tailwind.css';
+import PwaSwUpdater from './pwa-sw-updater';
 
 // Componente de Login Simples
 const Login = ({ onLogin }) => {
@@ -117,10 +118,20 @@ const App = () => {
   };
 
   if (isLoggedIn) {
-    return <Dashboard onLogout={handleLogout} />;
+    return (
+      <>
+        <PwaSwUpdater />
+        <Dashboard onLogout={handleLogout} />
+      </>
+    );
   }
 
-  return <Login onLogin={handleLogin} />;
+  return (
+    <>
+      <PwaSwUpdater />
+      <Login onLogin={handleLogin} />
+    </>
+  );
 };
 
 export default App;

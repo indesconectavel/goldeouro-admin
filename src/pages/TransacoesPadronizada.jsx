@@ -26,10 +26,10 @@ const TransacoesPadronizada = () => {
       { title: 'Tempo Médio', value: '2 min', icon: '⏱️' }
     ],
     tableData: [
-      { id: 1, tipo: 'Depósito', valor: 500.00, status: 'completed', data: '2025-01-07T10:00:00Z', usuario: 'João Silva' },
-      { id: 2, tipo: 'Saque', valor: 200.00, status: 'pending', data: '2025-01-07T11:30:00Z', usuario: 'Maria Santos' },
-      { id: 3, tipo: 'Depósito', valor: 1000.00, status: 'completed', data: '2025-01-07T12:15:00Z', usuario: 'Pedro Costa' },
-      { id: 4, tipo: 'Saque', valor: 150.00, status: 'failed', data: '2025-01-07T13:45:00Z', usuario: 'Ana Oliveira' }
+      { id: 1, tipo: 'Depósito', valor: 500.00, status: 'completed', data: '2025-01-07T10:00:00Z', usuario: 'Usuário' },
+      { id: 2, tipo: 'Saque', valor: 200.00, status: 'pending', data: '2025-01-07T11:30:00Z', usuario: 'Usuário' },
+      { id: 3, tipo: 'Depósito', valor: 1000.00, status: 'completed', data: '2025-01-07T12:15:00Z', usuario: 'Usuário' },
+      { id: 4, tipo: 'Saque', valor: 150.00, status: 'failed', data: '2025-01-07T13:45:00Z', usuario: 'Usuário' }
     ]
   };
 

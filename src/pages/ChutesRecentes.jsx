@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -17,49 +19,12 @@ export default function ChutesRecentes() {
         setChutes(data || []);
       } catch (error) {
         console.error('Erro ao buscar chutes recentes:', error);
-        // Dados fictícios como fallback
-        setChutes([
-          {
-            id: 1,
-            user_name: 'João Silva',
-            game_id: 1001,
-            direction: 'Centro',
-            scored: true,
-            created_at: '2025-01-17T14:30:00Z'
-          },
-          {
-            id: 2,
-            user_name: 'Maria Santos',
-            game_id: 1002,
-            direction: 'Esquerda',
-            scored: false,
-            created_at: '2025-01-17T14:25:00Z'
-          },
-          {
-            id: 3,
-            user_name: 'Pedro Costa',
-            game_id: 1003,
-            direction: 'Direita',
-            scored: true,
-            created_at: '2025-01-17T14:20:00Z'
-          },
-          {
-            id: 4,
-            user_name: 'Ana Oliveira',
-            game_id: 1004,
-            direction: 'Centro',
-            scored: true,
-            created_at: '2025-01-17T14:15:00Z'
-          },
-          {
-            id: 5,
-            user_name: 'Carlos Lima',
-            game_id: 1005,
-            direction: 'Esquerda',
-            scored: false,
-            created_at: '2025-01-17T14:10:00Z'
-          }
-        ]);
+        // Usar dados fictícios em desenvolvimento, array vazio em produção
+        if (shouldFallbackToMock()) {
+          setChutes(mockGames);
+        } else {
+          setChutes([]);
+        }
       } finally {
         setLoading(false);
       }

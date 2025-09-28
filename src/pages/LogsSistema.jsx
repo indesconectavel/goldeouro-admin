@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { postData } from '../js/api';
+import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
+import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -29,7 +31,7 @@ export default function LogsSistema() {
           {
             id: 2,
             action: 'USER_CREATE',
-            details: 'Novo usuário João Silva foi criado',
+            details: 'Novo usuário Usuário foi criado',
             created_at: '2025-01-17T14:25:00Z',
             level: 'info'
           },
@@ -43,7 +45,7 @@ export default function LogsSistema() {
           {
             id: 4,
             action: 'PAYMENT',
-            details: 'Pagamento de R$ 50,00 processado para usuário Maria Santos',
+            details: 'Pagamento de R$ 50,00 processado para usuário Usuário',
             created_at: '2025-01-17T14:15:00Z',
             level: 'info'
           },
