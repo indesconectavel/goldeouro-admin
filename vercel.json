@@ -1,45 +1,17 @@
 {
-  "version": 2,
-  "domains": ["admin.goldeouro.lol"],
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "https://goldeouro-backend-v2.fly.dev/api/$1"
-    },
-    {
-      "src": "/health",
-      "dest": "https://goldeouro-backend-v2.fly.dev/health"
-    },
-    {
-      "src": "/version",
-      "dest": "https://goldeouro-backend-v2.fly.dev/version"
-    },
-    {
-      "src": "/readiness",
-      "dest": "https://goldeouro-backend-v2.fly.dev/readiness"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://goldeouro-backend-v2.fly.dev/api/$1" },
+    { "source": "/health", "destination": "https://goldeouro-backend-v2.fly.dev/health" },
+    { "source": "/version", "destination": "https://goldeouro-backend-v2.fly.dev/version" },
+    { "source": "/readiness", "destination": "https://goldeouro-backend-v2.fly.dev/readiness" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
-    "VITE_API_URL": "https://admin.goldeouro.lol",
-    "VITE_ADMIN_TOKEN": "admin-prod-token-2025",
-    "VITE_APP_ENV": "production"
+    "VITE_API_URL": "/api",
+    "VITE_APP_ENV": "production",
+    "VITE_USE_MOCKS": "false",
+    "VITE_USE_SANDBOX": "false",
+    "VITE_LOG_LEVEL": "error"
   },
   "headers": [
     {
@@ -67,7 +39,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://admin.goldeouro.lol https://goldeouro-backend-v2.fly.dev; media-src 'self' data: blob:;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' data: blob: https://goldeouro-backend-v2.fly.dev; media-src 'self' data: blob:; object-src 'none'; frame-ancestors 'self'; base-uri 'self'"
         }
       ]
     },
@@ -82,6 +54,19 @@
           "key": "CDN-Cache-Control",
           "value": "public, max-age=31536000"
         }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" },
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" }
       ]
     },
     {
