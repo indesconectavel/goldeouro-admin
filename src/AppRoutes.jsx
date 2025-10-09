@@ -1,8 +1,9 @@
 // src/AppRoutes.jsx
 
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./components/MainLayout";
+// Removido ProtectedRoute - usando proteção direta no MainLayout
 
 // Páginas
 import Dashboard from "./pages/Dashboard";
@@ -57,144 +58,144 @@ export default function AppRoutes() {
       <Route
         path="/lista-usuarios"
         element={
-          <MainLayout>
-            <ListaUsuarios />
-          </MainLayout>
+        <MainLayout>
+          <ListaUsuarios />
+        </MainLayout>
         }
       />
       <Route
         path="/relatorio-usuarios"
         element={
-          <MainLayout>
-            <RelatorioUsuarios />
+        <MainLayout>
+              <RelatorioUsuarios />
           </MainLayout>
         }
       />
       <Route
         path="/relatorio-por-usuario"
         element={
-          <MainLayout>
-            <RelatorioPorUsuario />
+        <MainLayout>
+              <RelatorioPorUsuario />
           </MainLayout>
         }
       />
       <Route
         path="/relatorio-financeiro"
         element={
-          <MainLayout>
-            <RelatorioFinanceiro />
+        <MainLayout>
+              <RelatorioFinanceiro />
           </MainLayout>
         }
       />
       <Route
         path="/relatorio-geral"
         element={
-          <MainLayout>
-            <RelatorioGeral />
+        <MainLayout>
+              <RelatorioGeral />
           </MainLayout>
         }
       />
       <Route
         path="/relatorio-semanal"
         element={
-          <MainLayout>
-            <RelatorioSemanal />
+        <MainLayout>
+              <RelatorioSemanal />
           </MainLayout>
         }
       />
       <Route
         path="/estatisticas"
         element={
-          <MainLayout>
-            <Estatisticas />
+        <MainLayout>
+              <Estatisticas />
           </MainLayout>
         }
       />
       <Route
         path="/estatisticas-gerais"
         element={
-          <MainLayout>
-            <EstatisticasGerais />
+        <MainLayout>
+              <EstatisticasGerais />
           </MainLayout>
         }
       />
       <Route
         path="/transacoes"
         element={
-          <MainLayout>
-            <Transacoes />
+        <MainLayout>
+              <Transacoes />
           </MainLayout>
         }
       />
       <Route
         path="/saque-usuarios"
         element={
-          <MainLayout>
-            <SaqueUsuarios />
+        <MainLayout>
+              <SaqueUsuarios />
           </MainLayout>
         }
       />
       <Route
         path="/usuarios-bloqueados"
         element={
-          <MainLayout>
-            <UsuariosBloqueados />
+        <MainLayout>
+              <UsuariosBloqueados />
           </MainLayout>
         }
       />
       <Route
         path="/fila"
         element={
-          <MainLayout>
-            <Fila />
+        <MainLayout>
+              <Fila />
           </MainLayout>
         }
       />
       <Route
         path="/top-jogadores"
         element={
-          <MainLayout>
-            <TopJogadores />
+        <MainLayout>
+              <TopJogadores />
           </MainLayout>
         }
       />
       <Route
         path="/backup"
         element={
-          <MainLayout>
-            <Backup />
+        <MainLayout>
+              <Backup />
           </MainLayout>
         }
       />
       <Route
         path="/configuracoes"
         element={
-          <MainLayout>
-            <Configuracoes />
+        <MainLayout>
+              <Configuracoes />
           </MainLayout>
         }
       />
       <Route
         path="/exportar-dados"
         element={
-          <MainLayout>
-            <ExportarDados />
+        <MainLayout>
+              <ExportarDados />
           </MainLayout>
         }
       />
       <Route
         path="/logs"
         element={
-          <MainLayout>
-            <Logs />
+        <MainLayout>
+              <Logs />
           </MainLayout>
         }
       />
       <Route
         path="/chutes"
         element={
-          <MainLayout>
-            <Chutes />
+        <MainLayout>
+              <Chutes />
           </MainLayout>
         }
       />

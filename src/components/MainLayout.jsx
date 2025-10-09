@@ -1,7 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { isAuthenticated } from '../js/auth';
 
 const MainLayout = ({ children }) => {
+  const navigate = useNavigate();
+  const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Verificar autenticação apenas no cliente
+    if (typeof window !== 'undefined') {
+      const authStatus = isAuthenticated();
+      setIsAuth(authStatus);
+      setIsLoading(false);
+      
+      if (!authStatus) {
+        navigate('/login', { replace: true });
+      }
+    }
+  }, [navigate]);
+
+  // Mostrar loading durante verificação
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="text-white text-lg">Verificando autenticação...</div>
+      </div>
+    );
+  }
+
+  // Se não estiver autenticado, não renderizar nada (será redirecionado)
+  if (!isAuth) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <Sidebar />

@@ -49,7 +49,12 @@ export const isAdminAuthenticated = () => {
 };
 
 export const getApiUrl = () => {
-  return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  // Em produção, usar rewrite do Vercel (/api)
+  if (import.meta.env.PROD) {
+    return '/api';
+  }
+  // Em desenvolvimento, usar localhost
+  return import.meta.env.VITE_API_URL || 'http://localhost:8080';
 };
 
 export const getAdminTokenHeader = () => {

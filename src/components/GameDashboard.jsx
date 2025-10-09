@@ -19,15 +19,15 @@ const GameDashboard = () => {
   // Função simplificada para buscar estatísticas
   const fetchStats = useCallback(async () => {
     try {
-      // Usar dados fictícios para desenvolvimento
+      // DADOS ZERADOS PARA PRODUÇÃO
       return {
-        totalGames: 100,
-        totalPlayers: 50,
-        totalPrizes: 5000,
-        totalBets: 1000,
-        totalShots: 100,
-        goldenGoals: 15,
-        nextGoldenGoal: 25
+        totalGames: 0,
+        totalPlayers: 0,
+        totalPrizes: 0,
+        totalBets: 0,
+        totalShots: 0,
+        goldenGoals: 0,
+        nextGoldenGoal: 0
       };
     } catch (error) {
       console.error('Erro ao buscar estatísticas:', error);
@@ -38,12 +38,8 @@ const GameDashboard = () => {
   // Função simplificada para buscar jogos recentes
   const fetchGames = useCallback(async () => {
     try {
-      // Usar dados fictícios para desenvolvimento
-      return [
-        { id: 1, player: 'João Silva', result: 'Gol', timestamp: '2025-01-17T14:30:00Z' },
-        { id: 2, player: 'Maria Santos', result: 'Defesa', timestamp: '2025-01-17T14:25:00Z' },
-        { id: 3, player: 'Pedro Costa', result: 'Gol', timestamp: '2025-01-17T14:20:00Z' }
-      ];
+      // DADOS ZERADOS PARA PRODUÇÃO
+      return [];
     } catch (error) {
       console.error('Erro ao buscar jogos recentes:', error);
       return null;
@@ -56,15 +52,15 @@ const GameDashboard = () => {
       setStats(data);
     } catch (error) {
       console.error('Erro ao carregar estatísticas:', error);
-      // Usar dados fictícios em caso de erro (congruentes com 100 chutes)
+      // DADOS ZERADOS PARA PRODUÇÃO
       setStats({
-        totalGames: 100,
-        totalPlayers: 50,
-        totalPrizes: 500.00, // R$ 5,00 por jogo x 100 jogos
-        totalBets: 1000.00, // R$ 10,00 por jogo x 100 jogos
-        totalShots: 100, // 100 chutes
-        goldenGoals: 12,
-        nextGoldenGoal: 100 // 100 chutes para próximo gol de ouro
+        totalGames: 0,
+        totalPlayers: 0,
+        totalPrizes: 0,
+        totalBets: 0,
+        totalShots: 0,
+        goldenGoals: 0,
+        nextGoldenGoal: 0
       });
     }
   }, [fetchStats]);
@@ -107,15 +103,15 @@ const GameDashboard = () => {
     return new Intl.NumberFormat('pt-BR').format(value);
   };
 
-  // Se estiver carregando, mostrar dados fictícios (congruentes com 100 chutes)
+  // Se estiver carregando, mostrar dados zerados
   const displayStats = isLoading ? {
-    totalGames: 100,
-    totalPlayers: 50,
-    totalPrizes: 500.00, // R$ 5,00 por jogo x 100 jogos
-    totalBets: 1000.00, // R$ 10,00 por jogo x 100 jogos
-    totalShots: 100, // 100 chutes
-    goldenGoals: 12,
-    nextGoldenGoal: 100 // 100 chutes para próximo gol de ouro
+    totalGames: 0,
+    totalPlayers: 0,
+    totalPrizes: 0,
+    totalBets: 0,
+    totalShots: 0,
+    goldenGoals: 0,
+    nextGoldenGoal: 0
   } : stats;
 
   const displayRecentGames = recentGames || [];

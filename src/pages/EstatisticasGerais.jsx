@@ -14,13 +14,13 @@ export default function EstatisticasGerais() {
         setEstatisticas(result);
       } catch (error) {
         console.error('Erro ao carregar estatísticas gerais:', error);
-        // Usar dados fictícios em caso de erro
+        // DADOS ZERADOS PARA PRODUÇÃO
         setEstatisticas({
-          totalUsuarios: 150,
-          usuariosAtivos: 120,
-          usuariosBloqueados: 30,
-          totalPartidas: 500,
-          mediaGolsPorPartida: 2.5
+          totalUsuarios: 0,
+          usuariosAtivos: 0,
+          usuariosBloqueados: 0,
+          totalPartidas: 0,
+          mediaGolsPorPartida: 0
         });
       }
     }

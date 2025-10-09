@@ -20,7 +20,10 @@
     "deploy:production": "powershell -ExecutionPolicy Bypass -File scripts/deploy-basico.ps1 -Environment production",
     "deploy:force": "powershell -ExecutionPolicy Bypass -File scripts/deploy-seguro.ps1 -Force",
     "protect:git": "git checkout -b painel-protegido-v1.1.0 && git add . && git commit -m \"Painel v1.1.0 | Protegido\" && git push origin painel-protegido-v1.1.0",
-    "protect:tag": "git tag -a v1.1.0-protegido -m \"Versão protegida do Painel\" && git push origin v1.1.0-protegido"
+    "protect:tag": "git tag -a v1.1.0-protegido -m \"Versão protegida do Painel\" && git push origin v1.1.0-protegido",
+    "audit:pre-deploy": "cd ../mcp-system && node audit-simple.js",
+    "deploy:safe": "npm run audit:pre-deploy && npm run build && npx vercel --prod",
+    "audit:full": "cd ../mcp-system && node audit-simple.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",

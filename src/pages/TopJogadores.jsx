@@ -19,15 +19,8 @@ const TopJogadores = () => {
         setJogadores(result || []);
       } catch (error) {
         console.error('Erro ao buscar top jogadores:', error);
-        if (shouldFallbackToMock()) {
-          setJogadores(mockTopPlayers);
-        } else {
-          if (shouldFallbackToMock()) {
-          setJogadores(mockTopPlayers);
-        } else {
-          setJogadores([]);
-        }
-        }
+        // DADOS ZERADOS PARA PRODUÇÃO
+        setJogadores([]);
       } finally {
         setLoading(false);
       }

@@ -14,22 +14,16 @@ const Estatisticas = () => {
         setStats(response.data);
       } catch (error) {
         console.error('Erro ao buscar estatísticas:', error);
-        // Dados fictícios como fallback
+        // DADOS ZERADOS PARA PRODUÇÃO
         setStats({
-          totalUsuarios: 156,
-          totalJogos: 1247,
-          totalReceita: "R$ 45.230,50",
-          totalLucro: "R$ 18.920,30",
-          usuariosAtivos: 98,
-          jogosHoje: 23,
-          receitaHoje: "R$ 2.340,80",
-          topJogadores: [
-            { nome: "Usuário", chutes: 89, gols: 12, saldo: "R$ 1.250,00" },
-            { nome: "Usuário", chutes: 76, gols: 8, saldo: "R$ 980,50" },
-            { nome: "Usuário", chutes: 65, gols: 15, saldo: "R$ 1.450,00" },
-            { nome: "Usuário", chutes: 54, gols: 6, saldo: "R$ 750,00" },
-            { nome: "Usuário", chutes: 43, gols: 9, saldo: "R$ 1.120,00" }
-          ]
+          totalUsuarios: 0,
+          totalJogos: 0,
+          totalReceita: "R$ 0,00",
+          totalLucro: "R$ 0,00",
+          usuariosAtivos: 0,
+          jogosHoje: 0,
+          receitaHoje: "R$ 0,00",
+          topJogadores: []
         });
       } finally {
         setLoading(false);

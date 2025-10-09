@@ -24,7 +24,7 @@ export default function Login() {
 
   // Senha válida (em produção, isso viria de uma API segura)
   const validPasswords = [
-    "G0ld3@0ur0_2025!"
+    "admin123" // Senha temporária para desenvolvimento
   ];
 
   const maxAttempts = 5;
@@ -140,7 +140,16 @@ export default function Login() {
   const passwordStrength = getPasswordStrength();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+      style={{
+        backgroundImage: `url('/images/Gol_de_Ouro_Bg01.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       <div className="w-full max-w-md">
         {/* Logo e Título */}
         <div className="text-center mb-8">

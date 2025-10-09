@@ -21,12 +21,8 @@ const ListaUsuarios = () => {
         setUsuarios(result || []);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
-        // Usar dados fictícios em desenvolvimento, array vazio em produção
-        if (shouldFallbackToMock()) {
-          setUsuarios(mockUsers);
-        } else {
-          setUsuarios([]);
-        }
+        // DADOS ZERADOS PARA PRODUÇÃO
+        setUsuarios([]);
       } finally {
         setLoading(false);
       }
