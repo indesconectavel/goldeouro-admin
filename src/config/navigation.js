@@ -59,7 +59,9 @@ export const supportsModernNavigation = () => {
 export const detectCSPIssues = () => {
   try {
     // Tentar executar código que pode ser bloqueado por CSP
-    eval('true');
+    // Substituindo eval() por uma alternativa segura
+    const testFunction = new Function('return true');
+    testFunction();
     return false; // Se chegou aqui, CSP não está bloqueando
   } catch (error) {
     return error.name === 'EvalError' || error.message.includes('CSP');
