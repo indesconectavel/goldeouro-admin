@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { getToken, logout } from '../js/auth';
+import { getApiUrl } from '../config/env';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://goldeouro-backend-v2.fly.dev',
+  baseURL: getApiUrl(),
   headers: { 'Content-Type': 'application/json' },
 });
 

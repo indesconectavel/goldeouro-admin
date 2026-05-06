@@ -1,4 +1,11 @@
 // Configurações de ambiente para o Painel Admin
+const DEFAULT_API_URL = 'https://goldeouro-backend-v2.fly.dev';
+
+export const normalizeApiBaseUrl = (rawUrl) => {
+  const normalized = String(rawUrl || '').trim().replace(/\/+$/, '');
+  return normalized || DEFAULT_API_URL;
+};
+
 export const logout = () => {
   try {
     // Limpar dados do localStorage (ambas as convenções)
@@ -49,12 +56,7 @@ export const isAdminAuthenticated = () => {
 };
 
 export const getApiUrl = () => {
-  // Em produção, usar rewrite do Vercel (/api)
-  if (import.meta.env.PROD) {
-    return '/api';
-  }
-  // Em desenvolvimento, usar localhost
-  return import.meta.env.VITE_API_URL || 'http://localhost:8080';
+  return normalizeApiBaseUrl(import.meta.env.VITE_API_URL);
 };
 
 export const getAdminTokenHeader = () => {

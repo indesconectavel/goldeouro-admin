@@ -1,6 +1,7 @@
 import { getToken, logout } from "./auth";
+import { getApiUrl } from "../config/env";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://goldeouro-backend-v2.fly.dev";
+const API_BASE_URL = getApiUrl();
 
 const redirectToLogin = () => {
   logout();

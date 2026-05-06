@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken, setToken, setUser } from "../js/auth";
+import { getApiUrl } from "../config/env";
 import StandardLoader from "../components/StandardLoader";
 import { Eye, EyeOff, Shield, AlertCircle, CheckCircle } from "lucide-react";
 import logo from "../assets/logo.png";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://goldeouro-backend-v2.fly.dev";
+const API_BASE_URL = getApiUrl();
 
 export default function Login() {
   const navigate = useNavigate();
