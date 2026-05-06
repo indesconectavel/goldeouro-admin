@@ -3,7 +3,9 @@ const DEFAULT_API_URL = 'https://goldeouro-backend-v2.fly.dev';
 
 export const normalizeApiBaseUrl = (rawUrl) => {
   const normalized = String(rawUrl || '').trim().replace(/\/+$/, '');
-  return normalized || DEFAULT_API_URL;
+  if (!normalized) return DEFAULT_API_URL;
+  if (normalized.includes('goldeouro-backend-v2.fly.dev')) return normalized;
+  return DEFAULT_API_URL;
 };
 
 export const logout = () => {
