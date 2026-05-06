@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '../config/env';
+import { logout } from '../js/auth';
 import { safeNavigate, isRouteActive } from '../utils/navigation';
 import {
   Home,
@@ -42,28 +42,14 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     try {
-      // Executar logout
-      const logoutSuccess = logout();
-      
-      if (logoutSuccess) {
-        // Limpar estado local
-        setIsOpen(false);
-        
-        // Navegar para login usando React Router
-        navigate('/login', { replace: true });
-        
-        // Forçar reload da página para garantir limpeza completa
-        setTimeout(() => {
-          window.location.href = '/login';
-        }, 100);
-      } else {
-        console.error('Falha no logout');
-        // Mesmo assim, tentar navegar
+      logout();
+      setIsOpen(false);
+      navigate('/login', { replace: true });
+      setTimeout(() => {
         window.location.href = '/login';
-      }
+      }, 50);
     } catch (error) {
       console.error('Erro durante logout:', error);
-      // Em caso de erro, forçar navegação
       window.location.href = '/login';
     }
   };

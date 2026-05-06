@@ -1,6 +1,7 @@
 // Serviço de dados que usa backend real em produção e mock em desenvolvimento
 import { mockUsers, mockTransactions, mockLogs, mockWithdrawals, isDevelopmentMode } from '../data/mockData';
 import { getApiUrl } from '../config/env.js';
+import { getToken, logout } from '../js/auth';
 
 const API_BASE_URL = getApiUrl(); // Usar configuração dinâmica
 
@@ -12,7 +13,7 @@ class DataService {
 
   // Método para fazer requisições autenticadas
   async makeAuthenticatedRequest(endpoint, options = {}) {
-    const token = localStorage.getItem('admin-token');
+    const token = getToken();
     
     const defaultOptions = {
       headers: {
@@ -27,6 +28,14 @@ class DataService {
         ...options,
         credentials: 'include' // Incluir cookies nas requisições
       });
+
+      if (response.status === 401 || response.status === 403) {
+        logout();
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        throw new Error('Sessão expirada ou não autorizada');
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

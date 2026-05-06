@@ -1,32 +1,36 @@
-export function isAuthenticated() {
-  const token = localStorage.getItem('admin-token');
-  const timestamp = localStorage.getItem('admin-token-timestamp');
-  
-  if (!token || !timestamp) {
-    return false;
-  }
-  
-  // Verificar se o token não expirou (24 horas)
-  const now = Date.now();
-  const tokenTime = parseInt(timestamp);
-  const maxAge = 24 * 60 * 60 * 1000; // 24 horas em ms
-  
-  if (now - tokenTime > maxAge) {
-    // Token expirado, limpar
-    logout();
-    return false;
-  }
-  
-  return true;
+const TOKEN_KEY = 'admin-token';
+const USER_KEY = 'admin-user';
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
 }
 
-export function login(token) {
-  const timestamp = Date.now().toString();
-  localStorage.setItem('admin-token', token);
-  localStorage.setItem('admin-token-timestamp', timestamp);
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function removeToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export function setUser(user) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+export function getUser() {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+export function isAuthenticated() {
+  return Boolean(getToken());
 }
 
 export function logout() {
-  localStorage.removeItem('admin-token');
-  localStorage.removeItem('admin-token-timestamp');
+  removeToken();
+  localStorage.removeItem(USER_KEY);
 }

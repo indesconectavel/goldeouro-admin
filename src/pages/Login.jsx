@@ -1,38 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../js/auth";
+import { getToken, setToken, setUser } from "../js/auth";
 import StandardLoader from "../components/StandardLoader";
 import { Eye, EyeOff, Shield, AlertCircle, CheckCircle } from "lucide-react";
 import logo from "../assets/logo.png";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://goldeouro-backend-v2.fly.dev";
+
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    email: "",
     password: "",
     rememberMe: false
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-  const [isLocked, setIsLocked] = useState(false);
   const [validation, setValidation] = useState({
     length: false,
     hasSpecial: false,
     hasNumber: false
   });
 
-  // Senha válida (em produção, isso viria de uma API segura)
-  const validPasswords = [
-    "admin123" // Senha temporária para desenvolvimento
-  ];
-
-  const maxAttempts = 5;
-  const lockoutTime = 30000; // 30 segundos
-
   useEffect(() => {
     // Verificar se já está autenticado
-    if (localStorage.getItem('admin-token')) {
+    if (getToken()) {
       navigate("/painel");
     }
   }, [navigate]);
@@ -61,13 +54,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isLocked) {
-      setError("Conta temporariamente bloqueada. Tente novamente em alguns segundos.");
-      return;
-    }
-
-    if (!formData.password) {
-      setError("Por favor, digite a senha.");
+    if (!formData.email || !formData.password) {
+      setError("Informe email e senha.");
       return;
     }
 
@@ -75,49 +63,38 @@ export default function Login() {
     setError("");
 
     try {
-      // Simular delay de autenticação
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
 
-      if (validPasswords.includes(formData.password)) {
-        // Login bem-sucedido
-        const token = `admin-token-${Date.now()}`;
-        login(token);
-        
-        // Salvar preferência de "lembrar"
-        if (formData.rememberMe) {
-          localStorage.setItem('admin-remember', 'true');
-        }
-
-        // Resetar tentativas
-        setAttempts(0);
-        
-        // Feedback de sucesso
-        setError("");
-        
-        // Navegar para o painel
-      navigate("/painel");
-    } else {
-        // Login falhou
-        const newAttempts = attempts + 1;
-        setAttempts(newAttempts);
-        
-        if (newAttempts >= maxAttempts) {
-          setIsLocked(true);
-          setError(`Muitas tentativas incorretas. Conta bloqueada por ${lockoutTime / 1000} segundos.`);
-          
-          // Desbloquear após o tempo de lockout
-          setTimeout(() => {
-            setIsLocked(false);
-            setAttempts(0);
-            setError("");
-          }, lockoutTime);
-        } else {
-          setError(`Senha incorreta. Tentativas restantes: ${maxAttempts - newAttempts}`);
-        }
+      const payload = await response.json();
+      if (!response.ok || !payload?.token) {
+        setError(payload?.message || "Falha na autenticação.");
+        return;
       }
+
+      setToken(payload.token);
+      if (payload?.user) {
+        setUser(payload.user);
+      }
+
+      if (formData.rememberMe) {
+        localStorage.setItem("admin-remember", "true");
+      } else {
+        localStorage.removeItem("admin-remember");
+      }
+
+      navigate("/painel");
     } catch (error) {
       console.error('Erro na autenticação:', error);
-      setError("Erro interno. Tente novamente.");
+      setError("Erro de conexão com o backend.");
     } finally {
       setLoading(false);
     }
@@ -167,6 +144,23 @@ export default function Login() {
         {/* Card de Login */}
         <div className="card p-8 w-full max-w-md mx-auto bg-white/10 border border-yellow-500/30 rounded-lg backdrop-blur-sm shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Campo de Email */}
+            <div>
+              <label className="block text-sm font-medium text-yellow-300 mb-2">
+                Email do Administrador
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-white/10 border border-yellow-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent backdrop-blur-sm"
+                placeholder="admin@goldeouro.lol"
+                required
+                disabled={loading}
+              />
+            </div>
+
             {/* Campo de Senha */}
             <div>
               <label className="block text-sm font-medium text-yellow-300 mb-2">
@@ -181,13 +175,13 @@ export default function Login() {
                   className="w-full p-3 bg-white/10 border border-yellow-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent backdrop-blur-sm pr-12"
                   placeholder="Digite sua senha"
             required
-                  disabled={loading || isLocked}
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-400 transition-colors"
-                  disabled={loading || isLocked}
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -224,7 +218,7 @@ export default function Login() {
                 checked={formData.rememberMe}
                 onChange={handleInputChange}
                 className="w-4 h-4 text-yellow-500 bg-white/10 border-yellow-500/30 rounded focus:ring-yellow-500 focus:ring-2"
-                disabled={loading || isLocked}
+                disabled={loading}
               />
               <label className="ml-2 text-sm text-gray-300">
                 Lembrar de mim
@@ -242,7 +236,7 @@ export default function Login() {
             {/* Botão de Login */}
           <button
             type="submit"
-              disabled={loading || isLocked || !formData.password}
+              disabled={loading || !formData.email || !formData.password}
               className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg flex items-center justify-center space-x-2"
             >
               {loading ? (
@@ -260,14 +254,7 @@ export default function Login() {
 
             {/* Informações de Segurança */}
             <div className="text-center">
-              <p className="text-xs text-gray-400">
-                {attempts > 0 && `Tentativas: ${attempts}/${maxAttempts}`}
-              </p>
-              {isLocked && (
-                <p className="text-xs text-red-400 mt-1">
-                  Conta bloqueada temporariamente
-                </p>
-              )}
+              <p className="text-xs text-gray-400">Use credenciais admin válidas do backend.</p>
             </div>
         </form>
         </div>
