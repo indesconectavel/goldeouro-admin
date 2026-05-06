@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { isAuthenticated } from '../js/auth';
 
 const MainLayout = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,7 +20,7 @@ const MainLayout = ({ children }) => {
         navigate('/login', { replace: true });
       }
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   // Mostrar loading durante verificação
   if (isLoading) {
