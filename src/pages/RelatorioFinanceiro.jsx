@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
+import { getData } from '../js/api';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -7,30 +7,27 @@ import GridTemplate from '../templates/GridTemplate';
 export default function RelatorioFinanceiro() {
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const toNumber = (value) => {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  };
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const result = await postData('/admin/relatorio-financeiro', {});
-        setDados(result);
+        setLoading(true);
+        setError('');
+        const result = await getData('/api/admin/financial/report');
+        if (!result?.success || !result?.data) {
+          throw new Error(result?.message || 'Falha ao carregar relatório financeiro');
+        }
+        setDados(result.data);
       } catch (error) {
-        console.error('Erro ao buscar dados financeiros, usando dados fictícios:', error);
-        // Dados fictícios como fallback
-        setDados({
-          receitaTotal: 125430.50,
-          despesasTotal: 45680.30,
-          lucroTotal: 79750.20,
-          receitaHoje: 2340.80,
-          receitaSemana: 15680.40,
-          receitaMes: 125430.50,
-          transacoes: [
-            { id: 1, tipo: 'Entrada', valor: 500.00, data: '2025-01-09', status: 'Concluída' },
-            { id: 2, tipo: 'Saída', valor: 200.00, data: '2025-01-09', status: 'Concluída' },
-            { id: 3, tipo: 'Entrada', valor: 750.00, data: '2025-01-08', status: 'Concluída' },
-            { id: 4, tipo: 'Saída', valor: 300.00, data: '2025-01-08', status: 'Pendente' },
-            { id: 5, tipo: 'Entrada', valor: 1200.00, data: '2025-01-07', status: 'Concluída' }
-          ]
-        });
+        console.error('Erro ao buscar dados financeiros reais:', error);
+        setError(error?.message || 'Erro ao carregar relatório financeiro');
+        setDados(null);
       } finally {
         setLoading(false);
       }
@@ -49,45 +46,48 @@ export default function RelatorioFinanceiro() {
   if (!dados) {
     return (
       <div className="space-y-6">
-        <div className="text-center text-gray-400">Ainda não possui dados financeiros...</div>
+        <div className="text-center text-gray-400">Ainda não possui dados financeiros para exibir.</div>
       </div>
     );
   }
 
   const {
-    receitaTotal,
-    despesasTotal,
-    lucroTotal,
-    receitaHoje,
-    receitaSemana,
-    receitaMes,
-    transacoes
+    receitas_depositos,
+    saques_total,
+    taxas_total,
+    saldo_total_usuarios,
+    volume_ledger,
+    resultado_liquido_estimado,
+    transacoes_recentes,
+    updated_at
   } = dados;
 
-  const getStatusBadge = (status) => {
-    const baseClasses = "px-2 py-1 rounded text-xs font-semibold";
-    switch (status) {
-      case 'Concluída':
-        return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Concluída</span>;
-      case 'Pendente':
-        return <span className={`${baseClasses} bg-yellow-500/20 text-yellow-400`}>Pendente</span>;
-      case 'Cancelada':
-        return <span className={`${baseClasses} bg-red-500/20 text-red-400`}>Cancelada</span>;
-      default:
-        return <span className={`${baseClasses} bg-gray-500/20 text-gray-400`}>Desconhecido</span>;
-    }
-  };
+  const transacoes = Array.isArray(transacoes_recentes) ? transacoes_recentes : [];
 
   const getTipoBadge = (tipo) => {
     const baseClasses = "px-2 py-1 rounded text-xs font-semibold";
     switch (tipo) {
-      case 'Entrada':
-        return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Entrada</span>;
-      case 'Saída':
-        return <span className={`${baseClasses} bg-red-500/20 text-red-400`}>Saída</span>;
+      case 'deposito':
+        return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Depósito</span>;
+      case 'saque':
+      case 'payout_manual_confirmado':
+        return <span className={`${baseClasses} bg-red-500/20 text-red-400`}>Saque</span>;
+      case 'taxa':
+        return <span className={`${baseClasses} bg-yellow-500/20 text-yellow-400`}>Taxa</span>;
       default:
-        return <span className={`${baseClasses} bg-gray-500/20 text-gray-400`}>Desconhecido</span>;
+        return <span className={`${baseClasses} bg-gray-500/20 text-gray-300`}>{tipo || 'Outro'}</span>;
     }
+  };
+
+  const formatCurrency = (value) => {
+    return `R$ ${toNumber(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
+  const formatDateTime = (value) => {
+    if (!value) return '-';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '-';
+    return date.toLocaleString('pt-BR');
   };
 
   const tableColumns = [
@@ -100,13 +100,17 @@ export default function RelatorioFinanceiro() {
     { 
       key: 'valor', 
       header: 'Valor',
-      render: (transacao) => `R$ ${transacao.valor.toFixed(2)}`
+      render: (transacao) => formatCurrency(transacao.valor)
     },
-    { key: 'data', header: 'Data' },
+    {
+      key: 'referencia',
+      header: 'Referência',
+      render: (transacao) => transacao.referencia || transacao.correlation_id || '-'
+    },
     { 
-      key: 'status', 
-      header: 'Status',
-      render: (transacao) => getStatusBadge(transacao.status)
+      key: 'created_at',
+      header: 'Data',
+      render: (transacao) => formatDateTime(transacao.created_at)
     }
   ];
 
@@ -116,22 +120,28 @@ export default function RelatorioFinanceiro() {
       <p className="text-gray-300 mb-6">
         Visão geral das finanças da plataforma.
       </p>
+
+      {error ? (
+        <div className="text-center text-red-400 bg-red-500/10 border border-red-500/30 rounded p-3">
+          {error}
+        </div>
+      ) : null}
       
       {/* Cards de Resumo Principal */}
       <GridTemplate cols={{ sm: 2, lg: 3 }}>
         <CardTemplate 
-          title="Receita Total" 
-          value={`R$ ${receitaTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+          title="Receitas Depósitos" 
+          value={formatCurrency(receitas_depositos)} 
           color="green" 
         />
         <CardTemplate 
-          title="Despesas Total" 
-          value={`R$ ${despesasTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+          title="Saques Total" 
+          value={formatCurrency(saques_total)} 
           color="red" 
         />
         <CardTemplate 
-          title="Lucro Total" 
-          value={`R$ ${lucroTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+          title="Taxas Total" 
+          value={formatCurrency(taxas_total)} 
           color="yellow" 
         />
       </GridTemplate>
@@ -139,28 +149,38 @@ export default function RelatorioFinanceiro() {
       {/* Cards de Período */}
       <GridTemplate cols={{ sm: 2, lg: 3 }}>
         <CardTemplate 
-          title="Receita Hoje" 
-          value={`R$ ${receitaHoje.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+          title="Saldo Total Usuários" 
+          value={formatCurrency(saldo_total_usuarios)} 
           color="blue" 
         />
         <CardTemplate 
-          title="Receita Semana" 
-          value={`R$ ${receitaSemana.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+          title="Volume Ledger" 
+          value={formatCurrency(volume_ledger)} 
           color="blue" 
         />
         <CardTemplate 
-          title="Receita Mês" 
-          value={`R$ ${receitaMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+          title="Resultado Líquido Estimado" 
+          value={formatCurrency(resultado_liquido_estimado)} 
           color="blue" 
         />
       </GridTemplate>
 
+      <div className="text-right text-xs text-gray-400">
+        Atualizado em: {formatDateTime(updated_at)}
+      </div>
+
       {/* Tabela de Transações */}
-      <TableTemplate 
-        title="Transações Recentes"
-        columns={tableColumns}
-        data={transacoes}
-      />
+      {transacoes.length === 0 ? (
+        <div className="text-center text-gray-400 py-6 border border-zinc-700 rounded">
+          Nenhuma transação recente encontrada no ledger.
+        </div>
+      ) : (
+        <TableTemplate 
+          title="Transações Recentes"
+          columns={tableColumns}
+          data={transacoes}
+        />
+      )}
     </div>
   );
 }
