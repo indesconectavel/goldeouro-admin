@@ -392,6 +392,13 @@ const SidebarMobileTablet = () => {
                   Chutes Recentes
                 </Link>
                 <Link 
+                  to="/auditoria" 
+                  className={linkClasses('/auditoria')}
+                  onClick={() => handleNavigation('/auditoria')}
+                >
+                  Auditoria admin
+                </Link>
+                <Link 
                   to="/logs" 
                   className={linkClasses('/logs')}
                   onClick={() => handleNavigation('/logs')}

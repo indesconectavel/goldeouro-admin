@@ -31,6 +31,7 @@ export const navigationConfig = {
     '/relatorio-geral',
     '/relatorio-semanal',
     '/chutes',
+    '/auditoria',
     '/logs',
     '/backup',
     '/configuracoes',

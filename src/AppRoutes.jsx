@@ -25,6 +25,7 @@ import Backup from "./pages/Backup";
 import Configuracoes from "./pages/Configuracoes";
 import ExportarDados from "./pages/ExportarDados";
 import Logs from "./pages/LogsSistema";
+import Auditoria from "./pages/Auditoria";
 import Chutes from "./pages/ChutesRecentes";
 import Logout from "./components/Logout";
 
@@ -188,6 +189,14 @@ export default function AppRoutes() {
         element={
         <MainLayout>
               <Logs />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/auditoria"
+        element={
+          <MainLayout>
+            <Auditoria />
           </MainLayout>
         }
       />

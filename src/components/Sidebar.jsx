@@ -330,6 +330,12 @@ const Sidebar = () => {
                   Chutes Recentes
                 </Link>
                 <Link 
+                  to="/auditoria" 
+                  className={linkClasses('/auditoria')}
+                >
+                  Auditoria admin
+                </Link>
+                <Link 
                   to="/logs" 
                   className={linkClasses('/logs')}
                 >
