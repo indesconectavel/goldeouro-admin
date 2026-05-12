@@ -32,7 +32,7 @@ export default function TableTemplate({
           </thead>
           <tbody>
             {data.map((row, rowIndex) => (
-              <tr key={rowIndex} className="border-b border-yellow-500/10">
+              <tr key={row.id != null ? String(row.id) : rowIndex} className="border-b border-yellow-500/10">
                 {columns.map((column, colIndex) => (
                   <td key={colIndex} className="py-2 text-white">
                     {column.render ? column.render(row) : row[column.key]}

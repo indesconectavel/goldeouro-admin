@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { getData } from '../js/api';
+import React, { useEffect, useState, useCallback } from 'react';
+import { getData, postData } from '../js/api';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
+
+const isAdminTipo = (u) => String(u?.tipo || '').toLowerCase() === 'admin';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -11,40 +13,93 @@ const Users = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [listVersion, setListVersion] = useState(0);
+  const [rowActionId, setRowActionId] = useState(null);
+
+  const loadUsers = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const params = new URLSearchParams();
+      params.set('limit', '50');
+      if (searchTerm.trim()) {
+        params.set('search', searchTerm.trim());
+      }
+      if (statusFilter && statusFilter !== 'all') {
+        params.set('status', statusFilter);
+      }
+      const result = await getData(`/api/admin/users/list?${params.toString()}`);
+      if (!result?.success) {
+        throw new Error(result?.message || 'Falha ao listar usuários');
+      }
+      setUsers(Array.isArray(result.data) ? result.data : []);
+      setMeta(result.meta ?? null);
+    } catch (e) {
+      console.error('Erro ao buscar usuários:', e);
+      setError(e?.message || 'Erro ao carregar usuários');
+      setUsers([]);
+      setMeta(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm, statusFilter]);
 
   useEffect(() => {
     const delayMs = searchTerm.trim() ? 400 : 0;
     const handle = setTimeout(() => {
-      void (async () => {
-        setLoading(true);
-        setError('');
-        try {
-          const params = new URLSearchParams();
-          params.set('limit', '50');
-          if (searchTerm.trim()) {
-            params.set('search', searchTerm.trim());
-          }
-          if (statusFilter && statusFilter !== 'all') {
-            params.set('status', statusFilter);
-          }
-          const result = await getData(`/api/admin/users/list?${params.toString()}`);
-          if (!result?.success) {
-            throw new Error(result?.message || 'Falha ao listar usuários');
-          }
-          setUsers(Array.isArray(result.data) ? result.data : []);
-          setMeta(result.meta ?? null);
-        } catch (e) {
-          console.error('Erro ao buscar usuários:', e);
-          setError(e?.message || 'Erro ao carregar usuários');
-          setUsers([]);
-          setMeta(null);
-        } finally {
-          setLoading(false);
-        }
-      })();
+      void loadUsers();
     }, delayMs);
     return () => clearTimeout(handle);
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, listVersion, loadUsers]);
+
+  const bumpList = () => setListVersion((v) => v + 1);
+
+  const handleBlock = async (u) => {
+    if (isAdminTipo(u)) return;
+    if (!window.confirm(`Bloquear o acesso de "${u.email || u.nome || u.id}"?`)) return;
+    const reasonRaw = window.prompt('Motivo do bloqueio (opcional):', '');
+    const payload = { userId: u.id };
+    if (reasonRaw != null && String(reasonRaw).trim() !== '') {
+      payload.reason = String(reasonRaw).trim();
+    }
+    setRowActionId(u.id);
+    setError('');
+    try {
+      const result = await postData('/api/admin/users/block', payload);
+      if (!result?.success) {
+        throw new Error(result?.message || 'Falha ao bloquear usuário');
+      }
+      bumpList();
+    } catch (e) {
+      console.error('Erro ao bloquear:', e);
+      setError(e?.message || 'Erro ao bloquear usuário');
+    } finally {
+      setRowActionId(null);
+    }
+  };
+
+  const handleUnblock = async (u) => {
+    if (!window.confirm(`Desbloquear o acesso de "${u.email || u.nome || u.id}"?`)) return;
+    const reasonRaw = window.prompt('Motivo do desbloqueio (opcional):', '');
+    const payload = { userId: u.id };
+    if (reasonRaw != null && String(reasonRaw).trim() !== '') {
+      payload.reason = String(reasonRaw).trim();
+    }
+    setRowActionId(u.id);
+    setError('');
+    try {
+      const result = await postData('/api/admin/users/unblock', payload);
+      if (!result?.success) {
+        throw new Error(result?.message || 'Falha ao desbloquear usuário');
+      }
+      bumpList();
+    } catch (e) {
+      console.error('Erro ao desbloquear:', e);
+      setError(e?.message || 'Erro ao desbloquear usuário');
+    } finally {
+      setRowActionId(null);
+    }
+  };
 
   const getStatusBadge = (status) => {
     const baseClasses = 'px-2 py-1 rounded text-xs font-semibold';
@@ -99,9 +154,57 @@ const Users = () => {
       render: (u) => getStatusBadge(u.account_status)
     },
     {
+      key: 'blocked_at',
+      header: 'Bloqueado em',
+      render: (u) => formatDate(u.blocked_at)
+    },
+    {
       key: 'created_at',
       header: 'Criado em',
       render: (u) => formatDate(u.created_at)
+    },
+    {
+      key: 'actions',
+      header: 'Ações',
+      render: (u) => {
+        if (rowActionId === u.id) {
+          return <span className="text-yellow-400 text-xs">Aguarde…</span>;
+        }
+        if (isAdminTipo(u)) {
+          if (u.account_status === 'blocked') {
+            return (
+              <button
+                type="button"
+                onClick={() => void handleUnblock(u)}
+                className="px-3 py-1 rounded bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-semibold"
+              >
+                Desbloquear
+              </button>
+            );
+          }
+          return <span className="text-gray-500 text-xs">—</span>;
+        }
+        if (u.account_status === 'active') {
+          return (
+            <button
+              type="button"
+              onClick={() => void handleBlock(u)}
+              className="px-3 py-1 rounded bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold"
+            >
+              Bloquear
+            </button>
+          );
+        }
+        return (
+          <button
+            type="button"
+            onClick={() => void handleUnblock(u)}
+            className="px-3 py-1 rounded bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs font-semibold"
+          >
+            Desbloquear
+          </button>
+        );
+      }
     }
   ];
 

@@ -8,7 +8,7 @@ import MainLayout from "./components/MainLayout";
 // Páginas
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
-import ListaUsuarios from "./pages/ListaUsuarios";
+import Users from "./pages/Users";
 import RelatorioUsuarios from "./pages/RelatorioUsuarios";
 import RelatorioPorUsuario from "./pages/RelatorioPorUsuario";
 import RelatorioFinanceiro from "./pages/RelatorioFinanceiro";
@@ -59,7 +59,7 @@ export default function AppRoutes() {
         path="/lista-usuarios"
         element={
         <MainLayout>
-          <ListaUsuarios />
+          <Users />
         </MainLayout>
         }
       />
