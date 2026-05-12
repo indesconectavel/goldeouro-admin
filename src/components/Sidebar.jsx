@@ -333,7 +333,7 @@ const Sidebar = () => {
                   to="/auditoria" 
                   className={linkClasses('/auditoria')}
                 >
-                  Auditoria admin
+                  Auditoria
                 </Link>
                 <Link 
                   to="/logs" 

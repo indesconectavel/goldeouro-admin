@@ -396,7 +396,7 @@ const SidebarMobileTablet = () => {
                   className={linkClasses('/auditoria')}
                   onClick={() => handleNavigation('/auditoria')}
                 >
-                  Auditoria admin
+                  Auditoria
                 </Link>
                 <Link 
                   to="/logs" 

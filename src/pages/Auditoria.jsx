@@ -11,8 +11,24 @@ const formatDate = (value) => {
 
 const formatMetadata = (meta) => {
   try {
-    const obj = meta && typeof meta === 'object' ? meta : {};
-    return JSON.stringify(obj, null, 2);
+    if (meta == null) {
+      return JSON.stringify(meta, null, 2);
+    }
+    if (typeof meta === 'object') {
+      return JSON.stringify(meta, null, 2);
+    }
+    if (typeof meta === 'string') {
+      const t = meta.trim();
+      if ((t.startsWith('{') && t.endsWith('}')) || (t.startsWith('[') && t.endsWith(']'))) {
+        try {
+          return JSON.stringify(JSON.parse(t), null, 2);
+        } catch {
+          return JSON.stringify(meta, null, 2);
+        }
+      }
+      return JSON.stringify(meta, null, 2);
+    }
+    return JSON.stringify(meta, null, 2);
   } catch (_) {
     return '—';
   }
