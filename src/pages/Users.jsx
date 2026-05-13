@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { getData, postData } from '../js/api';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
@@ -162,6 +163,18 @@ const Users = () => {
       key: 'created_at',
       header: 'Criado em',
       render: (u) => formatDate(u.created_at)
+    },
+    {
+      key: 'relatorio',
+      header: 'Relatório',
+      render: (u) => (
+        <Link
+          to={`/relatorio-por-usuario/${encodeURIComponent(String(u.id))}`}
+          className="text-yellow-300 hover:text-yellow-200 text-xs font-semibold underline"
+        >
+          Ver
+        </Link>
+      )
     },
     {
       key: 'actions',

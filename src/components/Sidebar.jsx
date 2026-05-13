@@ -204,8 +204,9 @@ const Sidebar = () => {
                   Relatório dos Usuários
                 </Link>
                 <Link 
-                  to="/relatorio-por-usuario" 
-                  className={linkClasses('/relatorio-por-usuario')}
+                  to="/lista-usuarios" 
+                  title="Abra o relatório individual pelo link na lista de usuários"
+                  className={linkClasses('/lista-usuarios')}
                 >
                   Relatório Individual
                 </Link>

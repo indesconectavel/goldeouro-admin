@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { postData } from '../js/api';
+import { getData } from '../js/api';
 import CardTemplate from '../templates/CardTemplate';
 import GridTemplate from '../templates/GridTemplate';
 import StandardLoader from '../components/StandardLoader';
@@ -10,237 +10,130 @@ const RelatorioPorUsuario = () => {
   const { id } = useParams();
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUsuario = async () => {
+      setLoading(true);
+      setError('');
+      setUsuario(null);
+      if (!id || String(id).trim() === '') {
+        setError('Identificador de usuário ausente na URL.');
+        setLoading(false);
+        return;
+      }
       try {
-        const result = await postData(`/admin/usuario/${id}`, {});
-        setUsuario(result);
-      } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
-        // Dados fictícios como fallback
-        setUsuario({
-          id: parseInt(id) || 1,
-          name: 'João Silva',
-          email: 'joao@email.com',
-          account_status: 'active',
-          created_at: '2025-01-15T10:30:00Z',
-          totalChutes: 25,
-          totalGols: 18,
-          saldo: 350.00,
-          totalCreditos: 500.00,
-          totalDebitos: 150.00,
-          ultimoLogin: '2025-01-17T14:30:00Z',
-          partidasJogadas: 20,
-          partidasVencidas: 12,
-          eficiencia: 72.0
-        });
+        const result = await getData(`/api/admin/users/${encodeURIComponent(String(id).trim())}`);
+        if (!result?.success || !result?.data) {
+          throw new Error(result?.message || 'Falha ao carregar dados do usuário');
+        }
+        setUsuario(result.data);
+      } catch (e) {
+        console.error('Erro ao buscar dados do usuário:', e);
+        setError(e?.message || 'Não foi possível carregar o relatório deste usuário.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsuario();
+    void fetchUsuario();
   }, [id]);
 
   if (loading) {
     return <StandardLoader message="Carregando dados do usuário..." />;
   }
 
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-yellow-400">Relatório individual</h1>
+        <div className="p-4 rounded bg-red-500/20 border border-red-500/40 text-red-200">{error}</div>
+        <Link to="/lista-usuarios" className="text-yellow-300 hover:underline">
+          ← Voltar à lista de usuários
+        </Link>
+      </div>
+    );
+  }
+
   if (!usuario) {
     return <EmptyState message="Usuário não encontrado ou sem dados disponíveis." />;
   }
 
+  const nome = usuario.nome || usuario.email || '—';
+  const saldo = Number.isFinite(Number(usuario.saldo)) ? Number(usuario.saldo) : 0;
+  const chutes = usuario.activity?.total_chutes;
+  const gols = usuario.activity?.total_gols;
+  const eficiencia =
+    typeof chutes === 'number' && chutes > 0 && typeof gols === 'number'
+      ? ((gols / chutes) * 100).toFixed(1)
+      : null;
+
   const getStatusBadge = (status) => {
-    const baseClasses = "px-2 py-1 rounded text-xs font-semibold";
+    const baseClasses = 'px-2 py-1 rounded text-xs font-semibold';
     if (status === 'blocked') {
       return <span className={`${baseClasses} bg-red-500/20 text-red-400`}>Bloqueado</span>;
-    } else {
-      return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Ativo</span>;
     }
+    return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Ativo</span>;
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-yellow-400">Histórico do Jogador</h1>
-        <Link 
-          to="/relatorio-usuarios" 
+        <h1 className="text-2xl font-bold text-yellow-400">Relatório individual</h1>
+        <Link
+          to="/lista-usuarios"
           className="text-sm text-yellow-300 hover:text-yellow-200 hover:underline transition-colors"
         >
-          ← Voltar ao relatório geral
+          ← Voltar à lista de usuários
         </Link>
       </div>
 
-      <p className="text-gray-300">
-        Análise detalhada do desempenho e histórico do usuário selecionado.
+      <p className="text-gray-300 text-sm">
+        Dados reais via <code className="text-yellow-200/90">GET /api/admin/users/:id</code>. Métricas de chutes
+        são agregações de leitura (contagem na tabela de chutes).
       </p>
 
-      {/* Informações Básicas do Usuário */}
       <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Informações do Usuário</h2>
+        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Informações do usuário</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <p className="text-sm text-gray-400 mb-1">Nome</p>
-            <h3 className="text-lg font-bold text-white">{usuario.name}</h3>
+            <h3 className="text-lg font-bold text-white">{nome}</h3>
           </div>
           <div>
             <p className="text-sm text-gray-400 mb-1">E-mail</p>
-            <h3 className="text-lg font-bold text-white">{usuario.email || 'Não informado'}</h3>
+            <h3 className="text-lg font-bold text-white">{usuario.email || '—'}</h3>
           </div>
           <div>
             <p className="text-sm text-gray-400 mb-1">Status</p>
-            <div className="mt-1">
-              {getStatusBadge(usuario.account_status)}
-            </div>
+            <div className="mt-1">{getStatusBadge(usuario.account_status)}</div>
           </div>
           <div>
             <p className="text-sm text-gray-400 mb-1">Criado em</p>
             <h3 className="text-lg font-bold text-white">
-              {new Date(usuario.created_at).toLocaleDateString('pt-BR')}
+              {usuario.created_at ? new Date(usuario.created_at).toLocaleString('pt-BR') : '—'}
             </h3>
           </div>
         </div>
       </div>
 
-      {/* Cards de Estatísticas Principais */}
       <GridTemplate cols={{ sm: 2, lg: 4 }}>
-        <CardTemplate 
-          title="Total de Chutes" 
-          value={usuario.totalChutes} 
-          color="blue" 
-        />
-        <CardTemplate 
-          title="Gols Marcados" 
-          value={usuario.totalGols} 
-          color="green" 
-        />
-        <CardTemplate 
-          title="Eficiência" 
-          value={`${usuario.eficiencia || 0}%`} 
-          color="purple" 
-        />
-        <CardTemplate 
-          title="Saldo Atual" 
-          value={`R$ ${usuario.saldo.toFixed(2)}`} 
-          color="yellow" 
+        <CardTemplate title="Total de chutes (registros)" value={chutes != null ? chutes : '—'} color="blue" />
+        <CardTemplate title="Chutes com prêmio &gt; 0" value={gols != null ? gols : '—'} color="green" />
+        <CardTemplate title="Eficiência (aprox.)" value={eficiencia != null ? `${eficiencia}%` : '—'} color="purple" />
+        <CardTemplate
+          title="Saldo atual"
+          value={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
+          color="yellow"
         />
       </GridTemplate>
 
-      {/* Cards de Estatísticas Financeiras */}
-      <GridTemplate cols={{ sm: 2, lg: 3 }}>
-        <CardTemplate 
-          title="Total de Entradas" 
-          value={`R$ ${usuario.totalCreditos.toFixed(2)}`} 
-          color="green" 
-        />
-        <CardTemplate 
-          title="Total de Saques" 
-          value={`R$ ${usuario.totalDebitos.toFixed(2)}`} 
-          color="red" 
-        />
-        <CardTemplate 
-          title="Saldo Líquido" 
-          value={`R$ ${(usuario.totalCreditos - usuario.totalDebitos).toFixed(2)}`} 
-          color="blue" 
-        />
-      </GridTemplate>
-
-      {/* Cards de Estatísticas de Jogo */}
-      <GridTemplate cols={{ sm: 2, lg: 3 }}>
-        <CardTemplate 
-          title="Partidas Jogadas" 
-          value={usuario.partidasJogadas || 0} 
-          color="yellow" 
-        />
-        <CardTemplate 
-          title="Partidas Vencidas" 
-          value={usuario.partidasVencidas || 0} 
-          color="green" 
-        />
-        <CardTemplate 
-          title="Taxa de Vitória" 
-          value={`${usuario.partidasJogadas > 0 ? ((usuario.partidasVencidas / usuario.partidasJogadas) * 100).toFixed(1) : 0}%`} 
-          color="purple" 
-        />
-      </GridTemplate>
-
-      {/* Histórico de Atividades */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Histórico de Atividades</h2>
-        <div className="space-y-4">
-          <div className="flex justify-between items-center py-2 border-b border-white/10">
-            <span className="text-gray-300">Último Login</span>
-            <span className="text-white font-semibold">
-              {usuario.ultimoLogin ? new Date(usuario.ultimoLogin).toLocaleString('pt-BR') : 'Nunca'}
-            </span>
-          </div>
-          <div className="flex justify-between items-center py-2 border-b border-white/10">
-            <span className="text-gray-300">Data de Cadastro</span>
-            <span className="text-white font-semibold">
-              {new Date(usuario.created_at).toLocaleString('pt-BR')}
-            </span>
-          </div>
-          <div className="flex justify-between items-center py-2 border-b border-white/10">
-            <span className="text-gray-300">Status da Conta</span>
-            <div>
-              {getStatusBadge(usuario.account_status)}
-            </div>
-          </div>
-          <div className="flex justify-between items-center py-2">
-            <span className="text-gray-300">ID do Usuário</span>
-            <span className="text-white font-semibold">#{usuario.id}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Resumo de Performance */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Resumo de Performance</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-white font-semibold mb-2">Estatísticas de Jogo</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Chutes por Partida:</span>
-                <span className="text-white">
-                  {usuario.partidasJogadas > 0 ? (usuario.totalChutes / usuario.partidasJogadas).toFixed(1) : 0}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Gols por Partida:</span>
-                <span className="text-white">
-                  {usuario.partidasJogadas > 0 ? (usuario.totalGols / usuario.partidasJogadas).toFixed(1) : 0}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Eficiência:</span>
-                <span className="text-white">{usuario.eficiencia || 0}%</span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-white font-semibold mb-2">Estatísticas Financeiras</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Entrada Média:</span>
-                <span className="text-white">
-                  R$ {usuario.totalChutes > 0 ? (usuario.totalCreditos / usuario.totalChutes).toFixed(2) : 0}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Saída Média:</span>
-                <span className="text-white">
-                  R$ {usuario.totalChutes > 0 ? (usuario.totalDebitos / usuario.totalChutes).toFixed(2) : 0}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Saldo Atual:</span>
-                <span className="text-white">R$ {usuario.saldo.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="card p-6 text-sm text-gray-400">
+        <p>
+          Não são exibidos totais financeiros agregados de crédito/débito nesta tela (não há endpoint dedicado na V1).
+          Use o <Link to="/relatorio-financeiro" className="text-yellow-300 underline">relatório financeiro</Link> para
+          movimentações recentes do ledger.
+        </p>
       </div>
     </div>
   );

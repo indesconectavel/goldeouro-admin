@@ -1,36 +1,33 @@
 // src/pages/Estatisticas.jsx
 
-import React, { useEffect, useState } from "react";
-import api from '../services/api';
+import React, { useEffect, useState } from 'react';
+import { getData } from '../js/api';
 
 const Estatisticas = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchStats = async () => {
+      setLoading(true);
+      setError('');
       try {
-        const response = await api.get('/admin/estatisticas-gerais');
+        const response = await getData('/api/admin/dashboard/stats');
+        if (!response?.success || !response?.data) {
+          throw new Error(response?.message || 'Falha ao carregar estatísticas');
+        }
         setStats(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar estatísticas:', error);
-        // DADOS ZERADOS PARA PRODUÇÃO
-        setStats({
-          totalUsuarios: 0,
-          totalJogos: 0,
-          totalReceita: "R$ 0,00",
-          totalLucro: "R$ 0,00",
-          usuariosAtivos: 0,
-          jogosHoje: 0,
-          receitaHoje: "R$ 0,00",
-          topJogadores: []
-        });
+      } catch (e) {
+        console.error('Erro ao buscar estatísticas:', e);
+        setStats(null);
+        setError(e?.message || 'Não foi possível carregar as estatísticas.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStats();
+    void fetchStats();
   }, []);
 
   if (loading) {
@@ -43,63 +40,61 @@ const Estatisticas = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="space-y-6 p-6">
+        <h1 className="text-2xl font-bold text-yellow-400">Estatísticas</h1>
+        <div className="p-4 rounded bg-red-500/20 border border-red-500/40 text-red-200">{error}</div>
+        <p className="text-gray-400 text-sm">
+          Fonte: <code className="text-yellow-200/90">GET /api/admin/dashboard/stats</code>
+        </p>
+      </div>
+    );
+  }
+
+  const fmt = (v) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(v || 0));
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-yellow-400 mb-6">Estatísticas</h1>
-      <p className="text-gray-300 mb-6">
-        Painel com dados de desempenho, uso da plataforma e engajamento dos jogadores.
+      <h1 className="text-2xl font-bold text-yellow-400 mb-2">Estatísticas</h1>
+      <p className="text-gray-400 text-sm mb-6">
+        Visão alinhada ao dashboard administrativo (métricas reais). Não inclui &quot;total de jogos&quot; ou ranking
+        de jogadores — endpoints dedicados não existem na API atual.
       </p>
 
       {stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="card p-6 text-center border border-yellow-500/20">
-            <h3 className="text-sm font-medium text-yellow-300 mb-2">Total de Usuários</h3>
-            <p className="text-2xl font-bold text-white">{stats.totalUsuarios}</p>
-          </div>
-          <div className="card p-6 text-center border border-yellow-500/20">
-            <h3 className="text-sm font-medium text-yellow-300 mb-2">Total de Jogos</h3>
-            <p className="text-2xl font-bold text-white">{stats.totalJogos}</p>
+            <h3 className="text-sm font-medium text-yellow-300 mb-2">Total de usuários</h3>
+            <p className="text-2xl font-bold text-white">{stats.total_users ?? 0}</p>
           </div>
           <div className="card p-6 text-center border border-green-500/20">
-            <h3 className="text-sm font-medium text-green-300 mb-2">Receita Total</h3>
-            <p className="text-2xl font-bold text-green-400">{stats.totalReceita}</p>
+            <h3 className="text-sm font-medium text-green-300 mb-2">Saldo agregado</h3>
+            <p className="text-2xl font-bold text-green-400">{fmt(stats.saldo_total)}</p>
+          </div>
+          <div className="card p-6 text-center border border-red-500/20">
+            <h3 className="text-sm font-medium text-red-300 mb-2">Saques pendentes</h3>
+            <p className="text-2xl font-bold text-red-400">{stats.saques_pendentes ?? 0}</p>
+          </div>
+          <div className="card p-6 text-center border border-blue-500/20">
+            <h3 className="text-sm font-medium text-blue-300 mb-2">Total de saques</h3>
+            <p className="text-2xl font-bold text-blue-300">{stats.saques_total ?? 0}</p>
+          </div>
+          <div className="card p-6 text-center border border-yellow-500/20">
+            <h3 className="text-sm font-medium text-yellow-300 mb-2">Linhas no ledger</h3>
+            <p className="text-2xl font-bold text-white">{stats.ledger_transacoes_total ?? 0}</p>
           </div>
           <div className="card p-6 text-center border border-green-500/20">
-            <h3 className="text-sm font-medium text-green-300 mb-2">Lucro Total</h3>
-            <p className="text-2xl font-bold text-green-400">{stats.totalLucro}</p>
+            <h3 className="text-sm font-medium text-green-300 mb-2">Volume financeiro (ledger)</h3>
+            <p className="text-2xl font-bold text-green-400">{fmt(stats.volume_financeiro_total)}</p>
           </div>
         </div>
       )}
 
-      {stats && stats.topJogadores && (
-        <div className="card p-6 border border-yellow-500/20">
-          <h3 className="text-lg font-semibold text-yellow-400 mb-4">Top Jogadores</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead>
-                <tr className="border-b border-yellow-500/20">
-                  <th className="text-left py-2 text-yellow-300">Posição</th>
-                  <th className="text-left py-2 text-yellow-300">Nome</th>
-                  <th className="text-left py-2 text-yellow-300">Chutes</th>
-                  <th className="text-left py-2 text-yellow-300">Gols</th>
-                  <th className="text-left py-2 text-yellow-300">Saldo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stats.topJogadores.map((jogador, index) => (
-                  <tr key={index} className="border-b border-yellow-500/10">
-                    <td className="py-2 text-white font-bold">#{index + 1}</td>
-                    <td className="py-2 text-white">{jogador.nome}</td>
-                    <td className="py-2 text-yellow-300">{jogador.chutes}</td>
-                    <td className="py-2 text-green-400">{jogador.gols}</td>
-                    <td className="py-2 text-green-400 font-semibold">{jogador.saldo}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+      {stats?.updated_at ? (
+        <p className="text-xs text-gray-500">Atualizado em: {new Date(stats.updated_at).toLocaleString('pt-BR')}</p>
+      ) : null}
     </div>
   );
 };

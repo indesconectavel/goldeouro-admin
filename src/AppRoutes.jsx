@@ -1,6 +1,6 @@
 // src/AppRoutes.jsx
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./components/MainLayout";
 // Removido ProtectedRoute - usando proteção direta no MainLayout
@@ -74,6 +74,14 @@ export default function AppRoutes() {
       />
       <Route
         path="/relatorio-por-usuario"
+        element={
+          <MainLayout>
+            <Navigate to="/lista-usuarios" replace />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/relatorio-por-usuario/:id"
         element={
         <MainLayout>
               <RelatorioPorUsuario />

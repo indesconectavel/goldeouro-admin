@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { postData } from '../js/api';
-import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
-import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
+import { getData } from '../js/api';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
@@ -12,217 +10,101 @@ import EmptyState from '../components/EmptyState';
 const RelatorioUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchUsuarios = async () => {
+      setLoading(true);
+      setError('');
       try {
-        const result = await postData('/admin/relatorio-usuarios', {});
-        setUsuarios(result || []);
-      } catch (error) {
-        console.error('Erro ao buscar relatório de usuários:', error);
-        if (shouldFallbackToMock()) {
-          setUsuarios(mockUsers);
-        } else {
-          setUsuarios([]);
+        const result = await getData('/api/admin/users/list?limit=200');
+        if (!result?.success) {
+          throw new Error(result?.message || 'Falha ao carregar usuários');
         }
+        setUsuarios(Array.isArray(result.data) ? result.data : []);
+      } catch (e) {
+        console.error('Erro ao buscar relatório de usuários:', e);
+        setUsuarios([]);
+        setError(e?.message || 'Erro ao carregar dados.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsuarios();
+    void fetchUsuarios();
   }, []);
-
-  const exportarCSV = () => {
-    const url = import.meta.env.VITE_API_URL + '/admin/exportar/usuarios-csv';
-    window.open(url, '_blank');
-  };
 
   if (loading) {
     return <StandardLoader message="Carregando relatório de usuários..." />;
   }
 
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-yellow-400">Relatório de usuários</h1>
+        <div className="p-4 rounded bg-red-500/20 border border-red-500/40 text-red-200">{error}</div>
+      </div>
+    );
+  }
+
   if (usuarios.length === 0) {
-    return <EmptyState message="Ainda não há dados de usuários para exibir no relatório." />;
+    return <EmptyState message="Nenhum usuário retornado para os parâmetros atuais." />;
   }
 
   const totalUsuarios = usuarios.length;
-  const totalChutes = usuarios.reduce((sum, user) => sum + user.totalChutes, 0);
-  const totalGols = usuarios.reduce((sum, user) => sum + user.totalGols, 0);
-  const totalCreditos = usuarios.reduce((sum, user) => sum + user.totalCreditos, 0);
-  const totalDebitos = usuarios.reduce((sum, user) => sum + user.totalDebitos, 0);
-  const saldoTotal = usuarios.reduce((sum, user) => sum + user.saldo, 0);
-  const taxaAcerto = totalChutes > 0 ? (totalGols / totalChutes * 100) : 0;
+  const saldoTotal = usuarios.reduce((sum, u) => sum + (Number.isFinite(Number(u.saldo)) ? Number(u.saldo) : 0), 0);
 
   const tableColumns = [
-    { 
-      key: 'name', 
+    {
+      key: 'nome',
       header: 'Nome',
       render: (usuario) => (
         <Link
-          to={`/relatorio-usuario/${usuario.id}`}
+          to={`/relatorio-por-usuario/${encodeURIComponent(String(usuario.id))}`}
           className="text-yellow-300 hover:text-yellow-200 hover:underline transition-colors"
         >
-          {usuario.name}
+          {usuario.nome || usuario.email || '—'}
         </Link>
       )
     },
-    { key: 'totalChutes', header: 'Chutes' },
-    { key: 'totalGols', header: 'Gols' },
-    { 
-      key: 'totalCreditos', 
-      header: 'Entradas (R$)',
-      render: (usuario) => (
-        <span className="text-green-400 font-semibold">
-          R$ {usuario.totalCreditos.toFixed(2)}
-        </span>
-      )
-    },
-    { 
-      key: 'totalDebitos', 
-      header: 'Saques (R$)',
-      render: (usuario) => (
-        <span className="text-red-400 font-semibold">
-          R$ {(usuario.totalDebitos || 0).toFixed(2)}
-        </span>
-      )
-    },
-    { 
-      key: 'saldo', 
+    { key: 'email', header: 'E-mail' },
+    {
+      key: 'saldo',
       header: 'Saldo (R$)',
       render: (usuario) => (
         <span className="text-white font-bold">
-          R$ {(usuario.saldo || 0).toFixed(2)}
+          R$ {(Number(usuario.saldo) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
         </span>
       )
+    },
+    {
+      key: 'account_status',
+      header: 'Status',
+      render: (u) => (u.account_status === 'blocked' ? 'Bloqueado' : 'Ativo')
     }
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-yellow-400">Relatório de Usuários</h1>
-        <button
-          onClick={exportarCSV}
-          className="px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-300 transition-colors"
-        >
-          Exportar CSV
-        </button>
+      <div className="flex justify-between items-center flex-wrap gap-2">
+        <h1 className="text-2xl font-bold text-yellow-400">Relatório de usuários</h1>
       </div>
 
-      <p className="text-gray-300">
-        Análise completa do desempenho e movimentação financeira dos usuários.
+      <p className="text-gray-300 text-sm">
+        Lista real (até 200 registros) via <code className="text-yellow-200/90">GET /api/admin/users/list</code>.
+        Clique no nome para o relatório individual.
       </p>
 
-      {/* Cards de Resumo */}
-      <GridTemplate cols={{ sm: 2, lg: 3 }}>
-        <CardTemplate 
-          title="Total de Usuários" 
-          value={totalUsuarios} 
-          color="yellow" 
-        />
-        <CardTemplate 
-          title="Total de Chutes" 
-          value={totalChutes} 
-          color="blue" 
-        />
-        <CardTemplate 
-          title="Total de Gols" 
-          value={totalGols} 
-          color="green" 
-        />
-        <CardTemplate 
-          title="Taxa de Acerto" 
-          value={`${taxaAcerto.toFixed(1)}%`} 
-          color="purple" 
-        />
-        <CardTemplate 
-          title="Total de Entradas" 
-          value={`R$ ${totalCreditos.toFixed(2)}`} 
-          color="green" 
-        />
-        <CardTemplate 
-          title="Total de Saques" 
-          value={`R$ ${totalDebitos.toFixed(2)}`} 
-          color="red" 
-        />
-        <CardTemplate 
-          title="Saldo Total" 
-          value={`R$ ${saldoTotal.toFixed(2)}`} 
-          color="blue" 
+      <GridTemplate cols={{ sm: 2, lg: 2 }}>
+        <CardTemplate title="Usuários na amostra" value={totalUsuarios} color="yellow" />
+        <CardTemplate
+          title="Soma dos saldos (amostra)"
+          value={`R$ ${saldoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          color="blue"
         />
       </GridTemplate>
 
-      {/* Tabela de Relatório */}
-      <TableTemplate 
-        title="Relatório Detalhado por Usuário"
-        columns={tableColumns}
-        data={usuarios}
-      />
-
-      {/* Estatísticas Adicionais */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Estatísticas Gerais</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="text-center">
-            <h3 className="text-white font-semibold mb-2">Média de Chutes</h3>
-            <p className="text-2xl font-bold text-yellow-400">
-              {(totalChutes / totalUsuarios).toFixed(1)}
-            </p>
-            <p className="text-sm text-gray-400">por usuário</p>
-          </div>
-          <div className="text-center">
-            <h3 className="text-white font-semibold mb-2">Média de Gols</h3>
-            <p className="text-2xl font-bold text-green-400">
-              {(totalGols / totalUsuarios).toFixed(1)}
-            </p>
-            <p className="text-sm text-gray-400">por usuário</p>
-          </div>
-          <div className="text-center">
-            <h3 className="text-white font-semibold mb-2">Entrada Média</h3>
-            <p className="text-2xl font-bold text-green-400">
-              R$ {(totalCreditos / totalUsuarios).toFixed(2)}
-            </p>
-            <p className="text-sm text-gray-400">por usuário</p>
-          </div>
-          <div className="text-center">
-            <h3 className="text-white font-semibold mb-2">Saldo Médio</h3>
-            <p className="text-2xl font-bold text-blue-400">
-              R$ {(saldoTotal / totalUsuarios).toFixed(2)}
-            </p>
-            <p className="text-sm text-gray-400">por usuário</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Informações do Relatório */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Informações do Relatório</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-300">Período:</span>
-              <span className="text-white font-semibold">Últimos 30 dias</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-300">Atualização:</span>
-              <span className="text-white font-semibold">
-                {new Date().toLocaleString('pt-BR')}
-              </span>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-300">Status:</span>
-              <span className="text-green-400 font-semibold">Atualizado</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-300">Exportação:</span>
-              <span className="text-yellow-400 font-semibold">Disponível</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TableTemplate title="Usuários" columns={tableColumns} data={usuarios} />
     </div>
   );
 };

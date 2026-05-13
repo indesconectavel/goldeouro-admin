@@ -1,99 +1,86 @@
 import { useEffect, useState } from 'react';
-import { postData } from '../js/api';
-import { shouldUseMockData, shouldFallbackToMock } from '../config/environment';
-import { mockUsers, mockGames, mockTopPlayers, mockTransactions, mockLogs } from '../data/mockData';
+import { Link } from 'react-router-dom';
+import { getData } from '../js/api';
 import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
 import StandardLoader from '../components/StandardLoader';
-import EmptyState from '../components/EmptyState';
 
 export default function LogsSistema() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function fetchLogs() {
+      setLoading(true);
+      setError('');
       try {
-        const response = await postData('/admin/logs', {});
-        setLogs(response || []);
-      } catch (error) {
-        console.error('Erro ao buscar logs:', error);
-        // Dados fictícios como fallback
-        setLogs([
-          {
-            id: 1,
-            action: 'LOGIN',
-            details: 'Usuário admin fez login no sistema',
-            created_at: '2025-01-17T14:30:00Z',
-            level: 'info'
-          },
-          {
-            id: 2,
-            action: 'USER_CREATE',
-            details: 'Novo usuário Usuário foi criado',
-            created_at: '2025-01-17T14:25:00Z',
-            level: 'info'
-          },
-          {
-            id: 3,
-            action: 'GAME_START',
-            details: 'Partida #1001 foi iniciada',
-            created_at: '2025-01-17T14:20:00Z',
-            level: 'info'
-          },
-          {
-            id: 4,
-            action: 'PAYMENT',
-            details: 'Pagamento de R$ 50,00 processado para usuário Usuário',
-            created_at: '2025-01-17T14:15:00Z',
-            level: 'info'
-          },
-          {
-            id: 5,
-            action: 'ERROR',
-            details: 'Erro ao conectar com banco de dados',
-            created_at: '2025-01-17T14:10:00Z',
-            level: 'error'
-          },
-          {
-            id: 6,
-            action: 'BACKUP',
-            details: 'Backup automático executado com sucesso',
-            created_at: '2025-01-17T14:05:00Z',
-            level: 'info'
-          },
-          {
-            id: 7,
-            action: 'WARNING',
-            details: 'Uso de memória alto detectado (85%)',
-            created_at: '2025-01-17T14:00:00Z',
-            level: 'warning'
-          }
-        ]);
+        const result = await getData('/api/admin/audit/logs?limit=100');
+        if (!result?.success || !Array.isArray(result.data)) {
+          throw new Error(result?.message || 'Resposta inválida da API de auditoria');
+        }
+        const mapped = result.data.map((row) => ({
+          id: row.id,
+          level: 'info',
+          action: row.action || '—',
+          details:
+            typeof row.metadata === 'object' && row.metadata !== null
+              ? JSON.stringify(row.metadata)
+              : String(row.metadata || '—'),
+          created_at: row.created_at,
+          admin_id: row.admin_id,
+          ip: row.ip
+        }));
+        setLogs(mapped);
+      } catch (e) {
+        console.error('Erro ao buscar logs:', e);
+        setLogs([]);
+        setError(e?.message || 'Não foi possível carregar os registros de auditoria.');
       } finally {
         setLoading(false);
       }
     }
 
-    fetchLogs();
+    void fetchLogs();
   }, []);
 
   if (loading) {
-    return <StandardLoader message="Carregando logs do sistema..." />;
+    return <StandardLoader message="Carregando registros de auditoria..." />;
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-yellow-400 mb-2">Logs administrativos</h1>
+        <p className="text-gray-400 text-sm mb-4">
+          Esta página lista as entradas persistidas em <code className="text-yellow-200/90">admin_logs</code> (mesma
+          fonte da tela de Auditoria).
+        </p>
+        <div className="p-4 rounded bg-red-500/20 border border-red-500/40 text-red-200">{error}</div>
+        <Link to="/auditoria" className="text-yellow-300 hover:underline text-sm">
+          Abrir tela de Auditoria com filtros
+        </Link>
+      </div>
+    );
   }
 
   if (logs.length === 0) {
-    return <EmptyState message="Ainda não há registros de ações no sistema." />;
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-yellow-400 mb-2">Logs administrativos</h1>
+        <p className="text-gray-400">Nenhum registro retornado para o limite atual.</p>
+      </div>
+    );
   }
 
   const totalLogs = logs.length;
-  const logsInfo = logs.filter(log => log.level === 'info').length;
-  const logsWarning = logs.filter(log => log.level === 'warning').length;
-  const logsError = logs.filter(log => log.level === 'error').length;
+  const logsInfo = logs.filter((log) => log.level === 'info').length;
+  const logsWarning = logs.filter((log) => log.level === 'warning').length;
+  const logsError = logs.filter((log) => log.level === 'error').length;
 
   const getLevelBadge = (level) => {
-    const baseClasses = "px-2 py-1 rounded text-xs font-semibold";
+    const baseClasses = 'px-2 py-1 rounded text-xs font-semibold';
     switch (level) {
       case 'info':
         return <span className={`${baseClasses} bg-blue-500/20 text-blue-400`}>INFO</span>;
@@ -102,20 +89,24 @@ export default function LogsSistema() {
       case 'error':
         return <span className={`${baseClasses} bg-red-500/20 text-red-400`}>ERROR</span>;
       default:
-        return <span className={`${baseClasses} bg-gray-500/20 text-gray-400`}>DEBUG</span>;
+        return <span className={`${baseClasses} bg-gray-500/20 text-gray-400`}>LOG</span>;
     }
   };
 
   const tableColumns = [
-    { 
-      key: 'level', 
+    {
+      key: 'level',
       header: 'Nível',
       render: (log) => getLevelBadge(log.level)
     },
     { key: 'action', header: 'Ação' },
-    { key: 'details', header: 'Descrição' },
-    { 
-      key: 'created_at', 
+    {
+      key: 'details',
+      header: 'Metadados',
+      render: (log) => <span className="text-xs break-all text-gray-200">{log.details}</span>
+    },
+    {
+      key: 'created_at',
       header: 'Data',
       render: (log) => new Date(log.created_at).toLocaleString('pt-BR')
     }
@@ -123,88 +114,19 @@ export default function LogsSistema() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-yellow-400 mb-6">Logs do Sistema</h1>
-      <p className="text-gray-300 mb-6">
-        Acompanhamento das ações administrativas realizadas na plataforma para fins de auditoria.
+      <h1 className="text-2xl font-bold text-yellow-400 mb-2">Logs administrativos</h1>
+      <p className="text-gray-300 mb-4 text-sm">
+        Fonte: <code className="text-yellow-200/90">GET /api/admin/audit/logs</code> (tabela <code>admin_logs</code>).
       </p>
 
-      {/* Cards de Resumo */}
       <GridTemplate cols={{ sm: 2, lg: 4 }}>
-        <CardTemplate 
-          title="Total de Logs" 
-          value={totalLogs} 
-          color="yellow" 
-        />
-        <CardTemplate 
-          title="Informações" 
-          value={logsInfo} 
-          color="blue" 
-        />
-        <CardTemplate 
-          title="Avisos" 
-          value={logsWarning} 
-          color="orange" 
-        />
-        <CardTemplate 
-          title="Erros" 
-          value={logsError} 
-          color="red" 
-        />
+        <CardTemplate title="Total de registros" value={totalLogs} color="yellow" />
+        <CardTemplate title="Marcados INFO" value={logsInfo} color="blue" />
+        <CardTemplate title="WARN" value={logsWarning} color="orange" />
+        <CardTemplate title="ERROR" value={logsError} color="red" />
       </GridTemplate>
 
-      {/* Tabela de Logs */}
-      <TableTemplate 
-        title="Histórico de Logs"
-        columns={tableColumns}
-        data={logs}
-      />
-
-      {/* Estatísticas por Tipo de Ação */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Estatísticas por Tipo de Ação</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {['LOGIN', 'USER_CREATE', 'GAME_START', 'PAYMENT'].map(acao => {
-            const logsAcao = logs.filter(log => log.action === acao).length;
-            
-            return (
-              <div key={acao} className="text-center">
-                <h3 className="text-white font-semibold mb-2">{acao.replace('_', ' ')}</h3>
-                <p className="text-2xl font-bold text-yellow-400">{logsAcao}</p>
-                <p className="text-sm text-gray-400">ocorrências</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Informações do Sistema */}
-      <div className="card p-6">
-        <h2 className="text-lg font-semibold text-yellow-400 mb-4">Informações do Sistema de Logs</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-300">Período de Retenção:</span>
-              <span className="text-white font-semibold">30 dias</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-300">Nível de Log:</span>
-              <span className="text-white font-semibold">INFO e superior</span>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-300">Última Atualização:</span>
-              <span className="text-white font-semibold">
-                {new Date().toLocaleString('pt-BR')}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-300">Status:</span>
-              <span className="text-green-400 font-semibold">Ativo</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TableTemplate title="Histórico" columns={tableColumns} data={logs} />
     </div>
   );
 }
