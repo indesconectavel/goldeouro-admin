@@ -4,6 +4,9 @@ import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
 
+const PIX_SEND_CONFIRM_MESSAGE =
+  'Esta ação enviará um PIX real ao jogador. Deseja continuar?';
+
 const SaqueUsuarios = () => {
   const [saques, setSaques] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +41,15 @@ const SaqueUsuarios = () => {
     if (normalized === 'pendente' || normalized === 'pending') {
       return <span className={`${baseClasses} bg-yellow-500/20 text-yellow-400`}>Pendente</span>;
     }
+    if (normalized === 'processando' || normalized === 'processing') {
+      return <span className={`${baseClasses} bg-amber-500/20 text-amber-300`}>Processando</span>;
+    }
+    if (normalized === 'aguardando_confirmacao') {
+      return <span className={`${baseClasses} bg-blue-500/20 text-blue-300`}>Aguardando PIX</span>;
+    }
+    if (normalized === 'processado') {
+      return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>PIX confirmado</span>;
+    }
     if (normalized.includes('pago')) {
       return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Pago</span>;
     }
@@ -66,20 +78,39 @@ const SaqueUsuarios = () => {
     return s === 'pendente' || s === 'pending';
   };
 
-  const canApprove = (saque) => isPending(saque.status) && (saque.ledger_state || 'NONE') === 'NONE';
+  const canApproveManual = (saque) => isPending(saque.status) && (saque.ledger_state || 'NONE') === 'NONE';
+  const canApproveAndSend = (saque) => canApproveManual(saque);
   const canCancel = (saque) =>
     isPending(saque.status) && !['PAYOUT_ONLY', 'COMPENSATED'].includes(String(saque.ledger_state || 'NONE'));
 
-  const handleApprove = async (saqueId) => {
+  const handleApproveManual = async (saqueId) => {
     setActionLoadingId(`approve:${saqueId}`);
     setError('');
     try {
       const result = await postData('/api/admin/withdraw/approve', { saqueId });
-      if (!result?.success) throw new Error(result?.message || 'Falha ao aprovar saque');
+      if (!result?.success) throw new Error(result?.message || 'Falha ao confirmar pagamento manual');
       await fetchSaques();
     } catch (e) {
-      console.error('Erro ao aprovar saque:', e);
-      setError(e?.message || 'Erro ao aprovar saque');
+      console.error('Erro ao confirmar PIX manual:', e);
+      setError(e?.message || 'Erro ao confirmar pagamento manual');
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleApproveAndSend = async (saqueId) => {
+    if (!window.confirm(PIX_SEND_CONFIRM_MESSAGE)) {
+      return;
+    }
+    setActionLoadingId(`send:${saqueId}`);
+    setError('');
+    try {
+      const result = await postData('/api/admin/withdraw/approve-and-send', { saqueId });
+      if (!result?.success) throw new Error(result?.message || 'Falha ao enviar PIX automático');
+      await fetchSaques();
+    } catch (e) {
+      console.error('Erro ao enviar PIX:', e);
+      setError(e?.message || 'Erro ao enviar PIX automático');
     } finally {
       setActionLoadingId(null);
     }
@@ -120,20 +151,20 @@ const SaqueUsuarios = () => {
       header: 'Usuário',
       render: (saque) => saque?.user?.nome || saque?.user?.email || saque?.usuario_id || '-'
     },
-    { 
-      key: 'amount', 
+    {
+      key: 'amount',
       header: 'Valor',
       render: (saque) => `R$ ${Number(saque.amount || saque.valor || 0).toFixed(2)}`
     },
-    { 
-      key: 'status', 
+    {
+      key: 'status',
       header: 'Status',
       render: (saque) => getStatusBadge(saque.status)
     },
-    { 
-      key: 'created_at', 
+    {
+      key: 'created_at',
       header: 'Data',
-      render: (saque) => saque.created_at ? new Date(saque.created_at).toLocaleString('pt-BR') : '-'
+      render: (saque) => (saque.created_at ? new Date(saque.created_at).toLocaleString('pt-BR') : '-')
     },
     {
       key: 'ledger_state',
@@ -145,22 +176,37 @@ const SaqueUsuarios = () => {
       header: 'Ações',
       render: (saque) => {
         const approveKey = `approve:${saque.id}`;
+        const sendKey = `send:${saque.id}`;
         const cancelKey = `cancel:${saque.id}`;
         const approving = actionLoadingId === approveKey;
+        const sending = actionLoadingId === sendKey;
         const cancelling = actionLoadingId === cancelKey;
+        const busy = approving || sending || cancelling;
         return (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => handleApprove(saque.id)}
-              disabled={!canApprove(saque) || approving || cancelling}
-              className="px-2 py-1 bg-green-600 text-white rounded disabled:opacity-50"
+              type="button"
+              onClick={() => handleApproveManual(saque.id)}
+              disabled={!canApproveManual(saque) || busy}
+              className="px-2 py-1 bg-green-700 text-white rounded disabled:opacity-50 text-xs"
+              title="Use quando o PIX já foi pago fora do sistema"
             >
-              {approving ? 'Aprovando...' : 'Aprovar'}
+              {approving ? 'Confirmando...' : 'Confirmar PIX manual'}
             </button>
             <button
+              type="button"
+              onClick={() => handleApproveAndSend(saque.id)}
+              disabled={!canApproveAndSend(saque) || busy}
+              className="px-2 py-1 bg-blue-600 text-white rounded disabled:opacity-50 text-xs"
+              title="Envia PIX automaticamente via Mercado Pago"
+            >
+              {sending ? 'Enviando...' : 'Aprovar e Enviar PIX'}
+            </button>
+            <button
+              type="button"
               onClick={() => handleCancel(saque.id)}
-              disabled={!canCancel(saque) || approving || cancelling}
-              className="px-2 py-1 bg-red-600 text-white rounded disabled:opacity-50"
+              disabled={!canCancel(saque) || busy}
+              className="px-2 py-1 bg-red-600 text-white rounded disabled:opacity-50 text-xs"
             >
               {cancelling ? 'Cancelando...' : 'Cancelar'}
             </button>
@@ -186,36 +232,14 @@ const SaqueUsuarios = () => {
         </div>
       ) : null}
 
-      {/* Cards de Resumo */}
       <GridTemplate cols={{ sm: 2, lg: 4 }}>
-        <CardTemplate 
-          title="Total de Saques" 
-          value={totalSaques} 
-          color="yellow" 
-        />
-        <CardTemplate 
-          title="Pagos" 
-          value={saquesPagos} 
-          color="green" 
-        />
-        <CardTemplate 
-          title="Pendentes" 
-          value={saquesPendentes} 
-          color="yellow" 
-        />
-        <CardTemplate 
-          title="Valor Total" 
-          value={`R$ ${valorTotal.toFixed(2)}`} 
-          color="blue" 
-        />
+        <CardTemplate title="Total de Saques" value={totalSaques} color="yellow" />
+        <CardTemplate title="Pagos" value={saquesPagos} color="green" />
+        <CardTemplate title="Pendentes" value={saquesPendentes} color="yellow" />
+        <CardTemplate title="Valor Total" value={`R$ ${valorTotal.toFixed(2)}`} color="blue" />
       </GridTemplate>
 
-      {/* Tabela de Saques */}
-      <TableTemplate 
-        title="Lista de Saques"
-        columns={tableColumns}
-        data={saques}
-      />
+      <TableTemplate title="Lista de Saques" columns={tableColumns} data={saques} />
     </div>
   );
 };
