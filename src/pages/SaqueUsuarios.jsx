@@ -4,14 +4,29 @@ import CardTemplate from '../templates/CardTemplate';
 import TableTemplate from '../templates/TableTemplate';
 import GridTemplate from '../templates/GridTemplate';
 
-const PIX_SEND_CONFIRM_MESSAGE =
-  'Esta ação enviará um PIX real ao jogador. Deseja continuar?';
+const MANUAL_CONFIRM_MESSAGE =
+  'Esta ação NÃO envia PIX automaticamente.\n\n' +
+  'Utilize apenas quando o pagamento já tiver sido realizado fora da plataforma.';
 
 const SaqueUsuarios = () => {
   const [saques, setSaques] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoadingId, setActionLoadingId] = useState(null);
+  const [engine, setEngine] = useState(null);
+  const [meta, setMeta] = useState(null);
+
+  const fetchEngine = async () => {
+    try {
+      const [healthResult, metaResult] = await Promise.all([getData('/health'), getData('/meta')]);
+      setEngine(healthResult?.paymentEngine || null);
+      setMeta(metaResult?.data || null);
+    } catch (e) {
+      console.warn('Não foi possível obter provider efetivo:', e);
+      setEngine(null);
+      setMeta(null);
+    }
+  };
 
   const fetchSaques = async () => {
     setLoading(true);
@@ -32,31 +47,43 @@ const SaqueUsuarios = () => {
   };
 
   useEffect(() => {
+    fetchEngine();
     fetchSaques();
   }, []);
 
-  const getStatusBadge = (status) => {
-    const baseClasses = 'px-2 py-1 rounded text-xs font-semibold';
-    const normalized = String(status || '').toLowerCase();
-    if (normalized === 'pendente' || normalized === 'pending') {
-      return <span className={`${baseClasses} bg-yellow-500/20 text-yellow-400`}>Pendente</span>;
+  const payoutProvider = engine?.payoutProvider || null;
+  const payoutAutomatic = String(payoutProvider || '').toLowerCase() !== 'mercadopago';
+
+  const badge = (classes, label) => (
+    <span className={`px-2 py-1 rounded text-xs font-semibold ${classes}`}>{label}</span>
+  );
+
+  const getWithdrawBadge = (saque) => {
+    const status = String(saque?.status || '').toLowerCase();
+    const ledger = String(saque?.ledger_state || 'NONE');
+    const transferStatus = String(saque?.asaas_transfer_status || '').toUpperCase();
+    const isManual =
+      status.includes('manual') ||
+      (ledger === 'PAYOUT_ONLY' && !saque?.asaas_transfer_id && !/(pago|processado)/.test(status));
+
+    if (status.includes('cancel')) return badge('bg-red-500/20 text-red-400', 'Cancelado');
+    if (/(falha|fail|erro|rejeit|refus)/.test(status)) {
+      return badge('bg-red-500/20 text-red-300', 'Falha');
     }
-    if (normalized === 'processando' || normalized === 'processing') {
-      return <span className={`${baseClasses} bg-amber-500/20 text-amber-300`}>Processando</span>;
+    if (isManual) return badge('bg-emerald-500/20 text-emerald-300', 'Pago Manualmente');
+    if (status.includes('pago') || status === 'processado') {
+      return badge('bg-green-500/20 text-green-400', 'Pago');
     }
-    if (normalized === 'aguardando_confirmacao') {
-      return <span className={`${baseClasses} bg-blue-500/20 text-blue-300`}>Aguardando PIX</span>;
+    if (transferStatus === 'AUTHORIZED' || transferStatus === 'BANK_PROCESSING') {
+      return badge('bg-indigo-500/20 text-indigo-300', 'Autorizado');
     }
-    if (normalized === 'processado') {
-      return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>PIX confirmado</span>;
+    if (/(processando|processing|aguardando|enviad)/.test(status) || transferStatus === 'PENDING') {
+      return badge('bg-blue-500/20 text-blue-300', 'Enviado');
     }
-    if (normalized.includes('pago')) {
-      return <span className={`${baseClasses} bg-green-500/20 text-green-400`}>Pago</span>;
+    if (status === 'pendente' || status === 'pending') {
+      return badge('bg-yellow-500/20 text-yellow-400', 'Pendente');
     }
-    if (normalized.includes('cancel')) {
-      return <span className={`${baseClasses} bg-red-500/20 text-red-400`}>Cancelado</span>;
-    }
-    return <span className={`${baseClasses} bg-gray-500/20 text-gray-400`}>{status || 'Desconhecido'}</span>;
+    return badge('bg-gray-500/20 text-gray-400', saque?.status || 'Desconhecido');
   };
 
   const getLedgerStateBadge = (ledgerState) => {
@@ -84,22 +111,28 @@ const SaqueUsuarios = () => {
     isPending(saque.status) && !['PAYOUT_ONLY', 'COMPENSATED'].includes(String(saque.ledger_state || 'NONE'));
 
   const handleApproveManual = async (saqueId) => {
+    if (!window.confirm(MANUAL_CONFIRM_MESSAGE)) {
+      return;
+    }
     setActionLoadingId(`approve:${saqueId}`);
     setError('');
     try {
       const result = await postData('/api/admin/withdraw/approve', { saqueId });
-      if (!result?.success) throw new Error(result?.message || 'Falha ao confirmar pagamento manual');
+      if (!result?.success) throw new Error(result?.message || 'Falha ao registrar baixa manual');
       await fetchSaques();
     } catch (e) {
-      console.error('Erro ao confirmar PIX manual:', e);
-      setError(e?.message || 'Erro ao confirmar pagamento manual');
+      console.error('Erro ao registrar baixa manual:', e);
+      setError(e?.message || 'Erro ao registrar baixa manual');
     } finally {
       setActionLoadingId(null);
     }
   };
 
   const handleApproveAndSend = async (saqueId) => {
-    if (!window.confirm(PIX_SEND_CONFIRM_MESSAGE)) {
+    const confirmMsg =
+      'Esta ação enviará um PIX REAL ao jogador.\n\n' +
+      'Confirme apenas se o envio automático deve ser executado agora.';
+    if (!window.confirm(confirmMsg)) {
       return;
     }
     setActionLoadingId(`send:${saqueId}`);
@@ -159,7 +192,7 @@ const SaqueUsuarios = () => {
     {
       key: 'status',
       header: 'Status',
-      render: (saque) => getStatusBadge(saque.status)
+      render: (saque) => getWithdrawBadge(saque)
     },
     {
       key: 'created_at',
@@ -186,27 +219,27 @@ const SaqueUsuarios = () => {
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => handleApproveManual(saque.id)}
-              disabled={!canApproveManual(saque) || busy}
-              className="px-2 py-1 bg-green-700 text-white rounded disabled:opacity-50 text-xs"
-              title="Use quando o PIX já foi pago fora do sistema"
-            >
-              {approving ? 'Confirmando...' : 'Confirmar PIX manual'}
-            </button>
-            <button
-              type="button"
               onClick={() => handleApproveAndSend(saque.id)}
               disabled={!canApproveAndSend(saque) || busy}
-              className="px-2 py-1 bg-blue-600 text-white rounded disabled:opacity-50 text-xs"
-              title="Envia PIX automaticamente via Mercado Pago"
+              className="px-2 py-1 min-h-[36px] bg-blue-600 text-white rounded disabled:opacity-50 text-xs"
+              title="Envia PIX real automaticamente ao jogador"
             >
               {sending ? 'Enviando...' : 'Aprovar e Enviar PIX'}
             </button>
             <button
               type="button"
+              onClick={() => handleApproveManual(saque.id)}
+              disabled={!canApproveManual(saque) || busy}
+              className="px-2 py-1 min-h-[36px] bg-emerald-700 text-white rounded disabled:opacity-50 text-xs"
+              title="NÃO envia PIX. Apenas registra baixa administrativa de pagamento feito fora da plataforma."
+            >
+              {approving ? 'Registrando...' : 'Marcar como Pago Manualmente'}
+            </button>
+            <button
+              type="button"
               onClick={() => handleCancel(saque.id)}
               disabled={!canCancel(saque) || busy}
-              className="px-2 py-1 bg-red-600 text-white rounded disabled:opacity-50 text-xs"
+              className="px-2 py-1 min-h-[36px] bg-red-600 text-white rounded disabled:opacity-50 text-xs"
             >
               {cancelling ? 'Cancelando...' : 'Cancelar'}
             </button>
@@ -220,6 +253,39 @@ const SaqueUsuarios = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-yellow-400 mb-6">Relatório de Saques</h1>
+      </div>
+
+      {engine ? (
+        <div className="p-3 rounded bg-white/5 border border-white/10 text-sm text-gray-300 flex flex-wrap gap-x-6 gap-y-1">
+          <span>
+            Envio automático de saque:{' '}
+            <strong className={payoutAutomatic ? 'text-green-400' : 'text-slate-300'}>
+              {engine?.pixOut?.productionHttpEnabled ? 'ativo' : 'inativo'}
+            </strong>
+            {!engine?.pixOut?.productionHttpEnabled && engine?.pixOut?.productionBlockReason ? (
+              <span className="text-gray-500 ml-1">({engine.pixOut.productionBlockReason})</span>
+            ) : null}
+          </span>
+          <span>
+            Ambiente:{' '}
+            <strong className="text-blue-300">
+              {engine?.productionRuntime || engine?.asaasEnv === 'production' ? 'produção' : 'homologação'}
+            </strong>
+          </span>
+          <span>
+            Runtime: <strong>{meta?.gitCommit || '—'}</strong>
+          </span>
+        </div>
+      ) : null}
+
+      <div className="p-3 rounded bg-blue-500/10 border border-blue-500/30 text-xs text-blue-200 space-y-1">
+        <p>
+          <strong>Aprovar e Enviar PIX</strong>: executa uma transferência real ao jogador automaticamente.
+        </p>
+        <p>
+          <strong>Marcar como Pago Manualmente</strong>: NÃO envia PIX. Use apenas quando o pagamento já foi
+          realizado fora da plataforma (baixa administrativa).
+        </p>
       </div>
 
       {error ? (
